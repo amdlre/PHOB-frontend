@@ -1,26 +1,141 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@source "../../node_modules/@amdlre/design-system/dist";
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* PHOB legacy brand tokens (preserved from Vite source) */
+@theme {
+  --color-brand-black: #0A0A0B;
+  --color-brand-white: #FFFFFF;
+  --color-brand-offwhite: #F8F9FA;
+  --color-brand-accent: #6366F1;
+  --color-brand-slate: #64748B;
+  --color-brand-border: #E2E8F0;
+  --color-brand-paper: #F5F5F4;
+
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-4xl: 2rem;
+  --radius-5xl: 2.5rem;
+}
+
+@utility ring-offset-background {
+  --tw-ring-offset-color: hsl(var(--background));
+}
+
+@layer base {
+  body {
+    background-color: var(--color-brand-offwhite);
+    color: var(--color-brand-black);
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
+  }
+  h1, h2, h3, h4, h5, h6 { letter-spacing: -0.02em; }
+}
+
+@layer components {
+  .glass {
+    background-color: rgb(255 255 255 / 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgb(255 255 255 / 0.3);
+  }
+  .btn-primary {
+    background-color: var(--color-brand-black);
+    color: white;
+    transition: all 300ms;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+  .btn-primary:hover {
+    background-color: var(--color-brand-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.2);
+  }
+  .btn-secondary {
+    background-color: white;
+    color: var(--color-brand-black);
+    border: 1px solid var(--color-brand-border);
+    transition: all 300ms;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+  .btn-secondary:hover {
+    border-color: var(--color-brand-black);
+    background-color: var(--color-brand-offwhite);
+  }
+  .card-premium {
+    background-color: white;
+    border-radius: 2.5rem;
+    border: 1px solid var(--color-brand-border);
+    box-shadow: 0 2px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -2px rgb(0 0 0 / 0.05);
+    transition: all 500ms;
+  }
+  .card-premium:hover {
+    box-shadow: 0 20px 50px -12px rgb(0 0 0 / 0.1);
+  }
+  .text-balance { text-wrap: balance; }
+  .input-base {
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--color-brand-offwhite);
+    border-radius: 1rem;
+    border: 1px solid var(--color-brand-border);
+    outline: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 200ms;
+  }
+  .input-base:focus {
+    border-color: var(--color-brand-accent);
+    box-shadow: 0 0 0 4px rgb(99 102 241 / 0.05);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
 }
+.animate-float { animation: float 6s ease-in-out infinite; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
