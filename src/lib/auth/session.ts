@@ -1,7 +1,10 @@
+import 'server-only';
 import { api } from '@/lib/api/fetcher';
 import { ENDPOINTS } from '@/lib/api/endpoints';
 import { getAccessToken } from './tokens';
 import type { User } from '@/types/auth';
+
+export { dashboardPathFor } from './paths';
 
 export async function getCurrentUser(): Promise<User | null> {
   const token = await getAccessToken();
@@ -17,9 +20,4 @@ export async function getCurrentUser(): Promise<User | null> {
 export async function isAuthenticated(): Promise<boolean> {
   const token = await getAccessToken();
   return !!token;
-}
-
-export function dashboardPathFor(role: string | undefined): string {
-  if (role === 'employee' || role === 'admin') return '/employee/dashboard';
-  return '/dashboard';
 }

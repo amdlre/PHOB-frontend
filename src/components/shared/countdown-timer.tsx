@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Stack, Typography } from '@amdlre/design-system';
 
 interface CountdownTimerProps {
   targetIso: string;
@@ -19,7 +20,12 @@ function formatRemaining(ms: number): string {
   return [h, m, s].map((n) => String(n).padStart(2, '0')).join(':');
 }
 
-export function CountdownTimer({ targetIso, readyAtMs = 60 * 60 * 1000, onReady, prefix }: CountdownTimerProps) {
+export function CountdownTimer({
+  targetIso,
+  readyAtMs = 60 * 60 * 1000,
+  onReady,
+  prefix,
+}: CountdownTimerProps) {
   const target = new Date(targetIso).getTime();
   const [now, setNow] = useState<number>(() => Date.now());
 
@@ -37,18 +43,24 @@ export function CountdownTimer({ targetIso, readyAtMs = 60 * 60 * 1000, onReady,
   }, [isReady, onReady]);
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      {prefix && (
-        <span className="text-[11px] font-black uppercase tracking-widest text-brand-slate">
+    <Stack gap={2} align="center">
+      {prefix ? (
+        <Typography
+          as="span"
+          variant="small"
+          className="text-[11px] font-black uppercase tracking-widest text-brand-slate"
+        >
           {prefix}
-        </span>
-      )}
-      <span
+        </Typography>
+      ) : null}
+      <Typography
+        as="span"
+        variant="large"
         className="font-mono text-3xl font-black tabular-nums tracking-tight text-brand-black"
         dir="ltr"
       >
         {formatRemaining(remainingToTarget)}
-      </span>
-    </div>
+      </Typography>
+    </Stack>
   );
 }

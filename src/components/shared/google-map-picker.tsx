@@ -1,7 +1,8 @@
 'use client';
 
-import { Loader } from '@googlemaps/js-api-loader';
+import { setOptions, importLibrary } from '@googlemaps/js-api-loader';
 import { useEffect, useRef, useState } from 'react';
+import { Box, Stack, Typography } from '@amdlre/design-system';
 import { APP_CONFIG } from '@/constants/config';
 
 interface Props {
@@ -14,9 +15,6 @@ const RIYADH = { lat: 24.7136, lng: 46.6753 };
 
 export function GoogleMapPicker({ initialLat, initialLng, onChange }: Props) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const markerRef = useRef<google.maps.marker.AdvancedMarkerElement | google.maps.Marker | null>(
-    null,
-  );
   const [error, setError] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
 
@@ -26,23 +24,19 @@ export function GoogleMapPicker({ initialLat, initialLng, onChange }: Props) {
       return;
     }
 
-    const loader = new Loader({
-      apiKey: APP_CONFIG.maps.apiKey,
-      version: 'weekly',
-      libraries: ['marker'],
-    });
-
     let cancelled = false;
 
-    loader
-      .load()
-      .then((google) => {
+    setOptions({ key: APP_CONFIG.maps.apiKey, v: 'weekly' });
+
+    Promise.all([importLibrary('maps'), importLibrary('marker')])
+      .then(([mapsLib]) => {
         if (cancelled || !mapRef.current) return;
         const center = {
           lat: initialLat ?? RIYADH.lat,
           lng: initialLng ?? RIYADH.lng,
         };
-        const map = new google.maps.Map(mapRef.current, {
+        const Map = mapsLib.Map;
+        const map = new Map(mapRef.current, {
           center,
           zoom: 14,
           mapTypeControl: false,
@@ -53,7 +47,6 @@ export function GoogleMapPicker({ initialLat, initialLng, onChange }: Props) {
           map,
           draggable: true,
         });
-        markerRef.current = marker;
         marker.addListener('dragend', () => {
           const pos = marker.getPosition();
           if (pos) onChange(pos.lat(), pos.lng());
@@ -76,15 +69,21 @@ export function GoogleMapPicker({ initialLat, initialLng, onChange }: Props) {
   }, []);
 
   return (
-    <div className="space-y-2">
-      <div
+    <Stack gap={2}>
+      <Box
         ref={mapRef}
         className="h-72 w-full overflow-hidden rounded-3xl border border-brand-border bg-brand-offwhite"
       />
-      {error && <p className="text-xs font-bold text-red-500">{error}</p>}
-      {!isReady && !error && (
-        <p className="text-xs font-bold text-brand-slate">جاري تحميل الخريطة...</p>
-      )}
-    </div>
+      {error ? (
+        <Typography as="p" variant="small" className="text-xs font-bold text-red-500">
+          {error}
+        </Typography>
+      ) : null}
+      {!isReady && !error ? (
+        <Typography as="p" variant="small" className="text-xs font-bold text-brand-slate">
+          جاري تحميل الخريطة...
+        </Typography>
+      ) : null}
+    </Stack>
   );
 }

@@ -1,15 +1,24 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { Button, Stack, Typography } from '@amdlre/design-system';
 
 export default function NotFound() {
   const t = useTranslations('common');
   return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-6 text-center">
-      <h1 className="text-7xl font-black text-brand-black">404</h1>
-      <p className="text-brand-slate">{t('notFound.description')}</p>
-      <Link href="/" className="btn-primary">
-        {t('notFound.backHome')}
-      </Link>
-    </div>
+    <Stack
+      gap={4}
+      align="center"
+      className="min-h-[60vh] justify-center px-6 text-center"
+    >
+      <Typography as="h1" variant="h1" className="text-7xl font-black text-brand-black">
+        404
+      </Typography>
+      <Typography as="p" variant="muted">
+        {t('notFound.description')}
+      </Typography>
+      <Button asChild className="btn-primary">
+        <Link href="/">{t('notFound.backHome')}</Link>
+      </Button>
+    </Stack>
   );
 }

@@ -4,6 +4,18 @@ import { useState, useTransition, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { ArrowLeft, Check, Sparkles } from 'lucide-react';
+import {
+  Box,
+  Button,
+  Card,
+  Flex,
+  Grid,
+  Input,
+  Label,
+  NativeSelect,
+  Stack,
+  Typography,
+} from '@amdlre/design-system';
 import { PACKAGES } from '@/constants/packages';
 import { createSubscriptionAction } from '@/actions/subscriptions';
 import type { Property, PackageId } from '@/types/domain';
@@ -57,136 +69,172 @@ export function SubscriptionForm({ properties }: Props) {
   };
 
   return (
-    <div className="space-y-6">
-      {serverError && (
-        <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600">
+    <Stack gap={6}>
+      {serverError ? (
+        <Box className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600">
           {serverError}
-        </div>
-      )}
+        </Box>
+      ) : null}
 
-      <div className="card-premium space-y-5 p-8">
-        <div className="space-y-2 text-right">
-          <label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-            {t('selectProperty')}
-          </label>
-          <select
-            value={propertyId}
-            onChange={(e) => setPropertyId(e.target.value)}
-            className="input-base text-right"
-          >
-            {properties.length === 0 && <option value="">—</option>}
-            {properties.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.building_name} {p.unit_number ? `· ${p.unit_number}` : ''}
-              </option>
-            ))}
-          </select>
-        </div>
+      <Card className="card-premium p-8">
+        <Stack gap={5}>
+          <Stack gap={2} className="text-right">
+            <Label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
+              {t('selectProperty')}
+            </Label>
+            <NativeSelect
+              value={propertyId}
+              onChange={(e) => setPropertyId(e.target.value)}
+              className="text-right"
+            >
+              {properties.length === 0 ? <option value="">—</option> : null}
+              {properties.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.building_name} {p.unit_number ? `· ${p.unit_number}` : ''}
+                </option>
+              ))}
+            </NativeSelect>
+          </Stack>
 
-        <div className="rounded-2xl border border-brand-border bg-brand-offwhite p-4 text-xs font-bold leading-relaxed text-brand-slate">
-          {isRenewal ? t('rules.renewalMinDate') : t('rules.newPropertyMinDate')}
-        </div>
+          <Box className="rounded-2xl border border-brand-border bg-brand-offwhite p-4 text-xs font-bold leading-relaxed text-brand-slate">
+            {isRenewal ? t('rules.renewalMinDate') : t('rules.newPropertyMinDate')}
+          </Box>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2 text-right">
-            <label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-              {t('startDate')}
-            </label>
-            <input
-              type="date"
-              value={startDate}
-              min={minStart}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="input-base text-right"
-            />
-          </div>
-          <div className="space-y-2 text-right">
-            <label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-              {t('endDate')}
-            </label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="input-base text-right"
-            />
-          </div>
-        </div>
-      </div>
+          <Grid gap={4} className="md:grid-cols-2">
+            <Stack gap={2} className="text-right">
+              <Label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
+                {t('startDate')}
+              </Label>
+              <Input
+                type="date"
+                value={startDate}
+                min={minStart}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="text-right"
+              />
+            </Stack>
+            <Stack gap={2} className="text-right">
+              <Label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
+                {t('endDate')}
+              </Label>
+              <Input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="text-right"
+              />
+            </Stack>
+          </Grid>
+        </Stack>
+      </Card>
 
-      <div className="space-y-3">
-        <h3 className="text-sm font-black text-brand-black">{t('selectPackage')}</h3>
-        <div className="grid gap-4 md:grid-cols-3">
+      <Stack gap={3}>
+        <Typography as="h3" variant="small" className="font-black text-brand-black">
+          {t('selectPackage')}
+        </Typography>
+        <Grid gap={4} className="md:grid-cols-3">
           {PACKAGES.map((pk) => {
             const active = pk.id === packageId;
             return (
-              <button
+              <Button
                 key={pk.id}
                 type="button"
+                variant="outline"
                 onClick={() => setPackageId(pk.id)}
-                className={`card-premium flex flex-col gap-3 p-6 text-right transition-all ${
+                className={`card-premium flex h-auto flex-col items-stretch gap-3 p-6 text-right transition-all ${
                   active ? 'border-brand-accent ring-4 ring-brand-accent/10' : ''
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <h4 className="text-lg font-black text-brand-black">{pk.name}</h4>
-                  {active && (
-                    <span className="grid h-6 w-6 place-items-center rounded-full bg-brand-accent text-white">
+                <Flex align="center" justify="between">
+                  <Typography as="h4" variant="large" className="font-black text-brand-black">
+                    {pk.name}
+                  </Typography>
+                  {active ? (
+                    <Flex
+                      as="span"
+                      align="center"
+                      justify="center"
+                      className="h-6 w-6 rounded-full bg-brand-accent text-white"
+                    >
                       <Check size={14} />
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-baseline gap-1 flex-row-reverse">
-                  <span className="text-3xl font-black text-brand-black">{pk.price}</span>
-                  <span className="text-xs font-bold text-brand-slate">
+                    </Flex>
+                  ) : null}
+                </Flex>
+                <Flex align="baseline" gap={1} direction="rowReverse">
+                  <Typography
+                    as="span"
+                    variant="h2"
+                    className="text-3xl font-black text-brand-black"
+                  >
+                    {pk.price}
+                  </Typography>
+                  <Typography as="span" variant="small" className="text-xs font-bold text-brand-slate">
                     {tc('currency')} {tc('perMonth')}
-                  </span>
-                </div>
-                <ul className="space-y-1 text-xs font-bold text-brand-slate">
+                  </Typography>
+                </Flex>
+                <Stack as="ul" gap={1}>
                   {pk.features.map((f, i) => (
-                    <li key={i} className="flex items-center gap-2">
+                    <Flex key={i} as="li" align="center" gap={2}>
                       <Sparkles size={10} className="text-brand-accent" />
-                      <span>{f}</span>
-                    </li>
+                      <Typography as="span" variant="small" className="text-xs font-bold text-brand-slate">
+                        {f}
+                      </Typography>
+                    </Flex>
                   ))}
-                </ul>
-              </button>
+                </Stack>
+              </Button>
             );
           })}
-        </div>
-      </div>
+        </Grid>
+      </Stack>
 
-      {selectedPackage && (
-        <div className="card-premium space-y-2 p-6 text-right">
-          <h4 className="text-xs font-black uppercase tracking-widest text-brand-slate">
-            {t('summary')}
-          </h4>
-          <div className="flex items-center justify-between text-sm font-bold text-brand-black">
-            <span>{selectedPackage.name}</span>
-            <span>
-              {selectedPackage.price} {tc('currency')}
-            </span>
-          </div>
-          <div className="flex items-center justify-between text-sm font-bold text-brand-slate">
-            <span>{t('startDate')}</span>
-            <span dir="ltr">{startDate}</span>
-          </div>
-          <div className="flex items-center justify-between text-sm font-bold text-brand-slate">
-            <span>{t('endDate')}</span>
-            <span dir="ltr">{endDate}</span>
-          </div>
-        </div>
-      )}
+      {selectedPackage ? (
+        <Card className="card-premium p-6 text-right">
+          <Stack gap={2}>
+            <Typography
+              as="h4"
+              variant="small"
+              className="text-xs font-black uppercase tracking-widest text-brand-slate"
+            >
+              {t('summary')}
+            </Typography>
+            <Flex align="center" justify="between">
+              <Typography as="span" variant="small" className="font-bold text-brand-black">
+                {selectedPackage.name}
+              </Typography>
+              <Typography as="span" variant="small" className="font-bold text-brand-black">
+                {selectedPackage.price} {tc('currency')}
+              </Typography>
+            </Flex>
+            <Flex align="center" justify="between">
+              <Typography as="span" variant="small" className="font-bold text-brand-slate">
+                {t('startDate')}
+              </Typography>
+              <Typography as="span" variant="small" className="font-bold text-brand-slate" dir="ltr">
+                {startDate}
+              </Typography>
+            </Flex>
+            <Flex align="center" justify="between">
+              <Typography as="span" variant="small" className="font-bold text-brand-slate">
+                {t('endDate')}
+              </Typography>
+              <Typography as="span" variant="small" className="font-bold text-brand-slate" dir="ltr">
+                {endDate}
+              </Typography>
+            </Flex>
+          </Stack>
+        </Card>
+      ) : null}
 
-      <button
+      <Button
         type="button"
         onClick={submit}
         disabled={pending || !propertyId}
-        className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-black py-5 text-sm font-black text-white shadow-xl transition-all hover:bg-brand-accent active:scale-95 disabled:opacity-60"
+        rightIcon={<ArrowLeft size={18} />}
+        className="w-full rounded-2xl bg-brand-black py-5 text-sm font-black text-white shadow-xl hover:bg-brand-accent disabled:opacity-60"
       >
-        <span>{pending ? '...' : t('confirmSubscription')}</span>
-        <ArrowLeft size={18} />
-      </button>
-    </div>
+        {pending ? '...' : t('confirmSubscription')}
+      </Button>
+    </Stack>
   );
 }

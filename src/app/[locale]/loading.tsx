@@ -1,7 +1,11 @@
+import { Box, Flex, Spinner } from '@amdlre/design-system';
+
 export default function Loading() {
   return (
-    <div className="flex min-h-[60vh] items-center justify-center">
-      <div className="h-12 w-12 animate-spin rounded-full border-4 border-brand-border border-t-brand-accent" />
-    </div>
+    <Flex align="center" justify="center" className="min-h-[60vh]">
+      <Box className="h-12 w-12">
+        <Spinner className="h-12 w-12 text-brand-accent" />
+      </Box>
+    </Flex>
   );
 }

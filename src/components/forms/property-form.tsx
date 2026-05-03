@@ -6,6 +6,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { ArrowLeft } from 'lucide-react';
+import {
+  Box,
+  Button,
+  Card,
+  Grid,
+  Input,
+  Label,
+  Stack,
+  Typography,
+} from '@amdlre/design-system';
 import { propertySchema, type PropertyFormData } from '@/lib/validations/property';
 import { createPropertyAction } from '@/actions/properties';
 import { GoogleMapPicker } from '@/components/shared/google-map-picker';
@@ -32,7 +42,6 @@ export function PropertyForm() {
       unit_number: '',
       door_code: '',
       address: '',
-      images: [],
     },
   });
 
@@ -66,67 +75,88 @@ export function PropertyForm() {
   ];
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {serverError && (
-        <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600">
-          {serverError}
-        </div>
-      )}
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Stack gap={6}>
+        {serverError ? (
+          <Box className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600">
+            {serverError}
+          </Box>
+        ) : null}
 
-      <div className="card-premium space-y-5 p-8">
-        <div className="grid gap-5 md:grid-cols-2">
-          {inputs.map((field) => (
-            <div key={field.name} className="space-y-2 text-right">
-              <label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-                {field.label}
-              </label>
-              <input
-                placeholder={field.placeholder}
-                className="input-base text-right"
-                {...register(field.name as 'building_name')}
-              />
-              {errors[field.name] && (
-                <p className="text-xs font-bold text-red-500">
-                  {(errors[field.name] as { message?: string })?.message}
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
+        <Card className="card-premium p-8">
+          <Stack gap={5}>
+            <Grid gap={5} className="md:grid-cols-2">
+              {inputs.map((field) => (
+                <Stack key={field.name} gap={2} className="text-right">
+                  <Label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
+                    {field.label}
+                  </Label>
+                  <Input
+                    placeholder={field.placeholder}
+                    className="input-base text-right"
+                    {...register(field.name as 'building_name')}
+                  />
+                  {errors[field.name] ? (
+                    <Typography as="p" variant="small" className="text-xs font-bold text-red-500">
+                      {(errors[field.name] as { message?: string })?.message}
+                    </Typography>
+                  ) : null}
+                </Stack>
+              ))}
+            </Grid>
 
-        <div className="space-y-2 text-right">
-          <label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-            {t('address')}
-          </label>
-          <input className="input-base text-right" {...register('address')} />
-        </div>
-      </div>
+            <Stack gap={2} className="text-right">
+              <Label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
+                {t('address')}
+              </Label>
+              <Input className="input-base text-right" {...register('address')} />
+            </Stack>
+          </Stack>
+        </Card>
 
-      <div className="card-premium space-y-3 p-8">
-        <h3 className="text-sm font-black text-brand-black">{t('images')}</h3>
-        <p className="text-xs font-bold text-brand-slate">{t('imagesHint')}</p>
-        <ImageUploader value={images} onChange={setImages} />
-      </div>
+        <Card className="card-premium p-8">
+          <Stack gap={3}>
+            <Typography as="h3" variant="small" className="font-black text-brand-black">
+              {t('images')}
+            </Typography>
+            <Typography as="p" variant="small" className="text-xs font-bold text-brand-slate">
+              {t('imagesHint')}
+            </Typography>
+            <ImageUploader value={images} onChange={setImages} />
+          </Stack>
+        </Card>
 
-      <div className="card-premium space-y-3 p-8">
-        <h3 className="text-sm font-black text-brand-black">{t('location')}</h3>
-        <p className="text-xs font-bold text-brand-slate">{t('locationHint')}</p>
-        <GoogleMapPicker onChange={(lat, lng) => setCoords({ lat, lng })} />
-        {coords.lat && (
-          <p className="text-[11px] font-bold text-brand-slate" dir="ltr">
-            lat: {coords.lat.toFixed(5)}, lng: {coords.lng?.toFixed(5)}
-          </p>
-        )}
-      </div>
+        <Card className="card-premium p-8">
+          <Stack gap={3}>
+            <Typography as="h3" variant="small" className="font-black text-brand-black">
+              {t('location')}
+            </Typography>
+            <Typography as="p" variant="small" className="text-xs font-bold text-brand-slate">
+              {t('locationHint')}
+            </Typography>
+            <GoogleMapPicker onChange={(lat, lng) => setCoords({ lat, lng })} />
+            {coords.lat ? (
+              <Typography
+                as="p"
+                variant="small"
+                className="text-[11px] font-bold text-brand-slate"
+                dir="ltr"
+              >
+                lat: {coords.lat.toFixed(5)}, lng: {coords.lng?.toFixed(5)}
+              </Typography>
+            ) : null}
+          </Stack>
+        </Card>
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-black py-5 text-sm font-black text-white shadow-xl transition-all hover:bg-brand-accent active:scale-95 disabled:opacity-60"
-      >
-        <span>{pending ? '...' : t('addProperty')}</span>
-        <ArrowLeft size={18} />
-      </button>
+        <Button
+          type="submit"
+          disabled={pending}
+          rightIcon={<ArrowLeft size={18} />}
+          className="w-full rounded-2xl bg-brand-black py-5 text-sm font-black text-white shadow-xl hover:bg-brand-accent disabled:opacity-60"
+        >
+          {pending ? '...' : t('addProperty')}
+        </Button>
+      </Stack>
     </form>
   );
 }

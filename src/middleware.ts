@@ -5,7 +5,7 @@ import { APP_CONFIG } from '@/constants/config';
 
 const intlMiddleware = createMiddleware(routing);
 
-const PUBLIC_PATHS = ['/', '/login', '/register'];
+const PUBLIC_PATHS = ['/', '/login', '/register', '/faq', '/plans'];
 const AUTH_PATHS = ['/login', '/register'];
 
 export default function middleware(request: NextRequest) {
@@ -21,9 +21,10 @@ export default function middleware(request: NextRequest) {
 
   const token = request.cookies.get(APP_CONFIG.auth.cookieName)?.value;
 
-  const isPublic = PUBLIC_PATHS.some(
-    (p) => pathWithoutLocale === p || pathWithoutLocale.startsWith(`${p}/`) && p !== '/',
-  ) || pathWithoutLocale === '/';
+  const isPublic =
+    PUBLIC_PATHS.some(
+      (p) => pathWithoutLocale === p || (pathWithoutLocale.startsWith(`${p}/`) && p !== '/'),
+    ) || pathWithoutLocale === '/';
 
   const isAuthPage = AUTH_PATHS.some((p) => pathWithoutLocale === p);
 

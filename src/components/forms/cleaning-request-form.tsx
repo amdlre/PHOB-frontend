@@ -4,6 +4,19 @@ import { useState, useTransition } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { ArrowLeft, AlertCircle } from 'lucide-react';
+import {
+  Box,
+  Button,
+  Card,
+  Flex,
+  Grid,
+  Input,
+  Label,
+  NativeSelect,
+  Stack,
+  Textarea,
+  Typography,
+} from '@amdlre/design-system';
 import { createCleaningRequestAction } from '@/actions/requests';
 import type { Property } from '@/types/domain';
 
@@ -12,7 +25,6 @@ interface Props {
 }
 
 function defaultScheduledAt(): string {
-  // 12 hours + 1 hour buffer rounded to next hour
   const d = new Date(Date.now() + 13 * 60 * 60 * 1000);
   d.setMinutes(0, 0, 0);
   return d.toISOString().slice(0, 16);
@@ -55,91 +67,97 @@ export function CleaningRequestForm({ properties }: Props) {
   };
 
   return (
-    <div className="space-y-6">
-      {error && (
-        <div className="flex items-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600">
+    <Stack gap={6}>
+      {error ? (
+        <Flex
+          align="center"
+          gap={2}
+          className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600"
+        >
           <AlertCircle size={16} />
-          <span>{error}</span>
-        </div>
-      )}
+          <Box as="span">{error}</Box>
+        </Flex>
+      ) : null}
 
-      {subscribed.length === 0 && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-700">
+      {subscribed.length === 0 ? (
+        <Box className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-700">
           {t('rules.noActiveSub')}
-        </div>
-      )}
+        </Box>
+      ) : null}
 
-      <div className="card-premium space-y-5 p-8">
-        <div className="space-y-2 text-right">
-          <label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-            {t('selectProperty')}
-          </label>
-          <select
-            value={propertyId}
-            onChange={(e) => setPropertyId(e.target.value)}
-            className="input-base text-right"
-            disabled={subscribed.length === 0}
-          >
-            {subscribed.length === 0 && <option value="">—</option>}
-            {subscribed.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.building_name} {p.unit_number ? `· ${p.unit_number}` : ''}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2 text-right">
-            <label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-              {t('scheduledAt')}
-            </label>
-            <input
-              type="datetime-local"
-              value={scheduledAt}
-              onChange={(e) => setScheduledAt(e.target.value)}
-              className="input-base text-right"
-            />
-          </div>
-          <div className="space-y-2 text-right">
-            <label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-              {t('type')}
-            </label>
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value as 'regular' | 'deep' | 'checkout')}
-              className="input-base text-right"
+      <Card className="card-premium p-8">
+        <Stack gap={5}>
+          <Stack gap={2} className="text-right">
+            <Label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
+              {t('selectProperty')}
+            </Label>
+            <NativeSelect
+              value={propertyId}
+              onChange={(e) => setPropertyId(e.target.value)}
+              className="text-right"
+              disabled={subscribed.length === 0}
             >
-              <option value="checkout">{t('types.checkout')}</option>
-              <option value="regular">{t('types.regular')}</option>
-              <option value="deep">{t('types.deep')}</option>
-            </select>
-          </div>
-        </div>
+              {subscribed.length === 0 ? <option value="">—</option> : null}
+              {subscribed.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.building_name} {p.unit_number ? `· ${p.unit_number}` : ''}
+                </option>
+              ))}
+            </NativeSelect>
+          </Stack>
 
-        <div className="space-y-2 text-right">
-          <label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-            {t('notes')}
-          </label>
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            rows={4}
-            placeholder={t('notesPlaceholder')}
-            className="input-base text-right"
-          />
-        </div>
-      </div>
+          <Grid gap={4} className="md:grid-cols-2">
+            <Stack gap={2} className="text-right">
+              <Label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
+                {t('scheduledAt')}
+              </Label>
+              <Input
+                type="datetime-local"
+                value={scheduledAt}
+                onChange={(e) => setScheduledAt(e.target.value)}
+                className="text-right"
+              />
+            </Stack>
+            <Stack gap={2} className="text-right">
+              <Label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
+                {t('type')}
+              </Label>
+              <NativeSelect
+                value={type}
+                onChange={(e) => setType(e.target.value as 'regular' | 'deep' | 'checkout')}
+                className="text-right"
+              >
+                <option value="checkout">{t('types.checkout')}</option>
+                <option value="regular">{t('types.regular')}</option>
+                <option value="deep">{t('types.deep')}</option>
+              </NativeSelect>
+            </Stack>
+          </Grid>
 
-      <button
+          <Stack gap={2} className="text-right">
+            <Label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
+              {t('notes')}
+            </Label>
+            <Textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={4}
+              placeholder={t('notesPlaceholder')}
+              className="text-right"
+            />
+          </Stack>
+        </Stack>
+      </Card>
+
+      <Button
         type="button"
         onClick={submit}
         disabled={pending || subscribed.length === 0}
-        className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-black py-5 text-sm font-black text-white shadow-xl transition-all hover:bg-brand-accent active:scale-95 disabled:opacity-60"
+        rightIcon={<ArrowLeft size={18} />}
+        className="w-full rounded-2xl bg-brand-black py-5 text-sm font-black text-white shadow-xl hover:bg-brand-accent disabled:opacity-60"
       >
-        <span>{pending ? '...' : t('submit')}</span>
-        <ArrowLeft size={18} />
-      </button>
-    </div>
+        {pending ? '...' : t('submit')}
+      </Button>
+    </Stack>
   );
 }

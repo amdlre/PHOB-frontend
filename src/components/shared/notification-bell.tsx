@@ -3,6 +3,7 @@
 import { Bell } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { Box, Button, Card, Flex, Stack, Typography } from '@amdlre/design-system';
 import type { Notification } from '@/types/domain';
 import { ENDPOINTS } from '@/lib/api/endpoints';
 import { APP_CONFIG } from '@/constants/config';
@@ -37,44 +38,66 @@ export function NotificationBell() {
   const unread = items.filter((n) => !n.read).length;
 
   return (
-    <div className="relative">
-      <button
+    <Box className="relative">
+      <Button
         type="button"
+        variant="outline"
+        size="icon"
         onClick={() => setOpen((v) => !v)}
-        className="relative flex h-10 w-10 items-center justify-center rounded-2xl border border-brand-border bg-white text-brand-black hover:border-brand-accent hover:text-brand-accent transition-all"
+        className="relative h-10 w-10 rounded-2xl border-brand-border bg-white text-brand-black hover:border-brand-accent hover:text-brand-accent"
         aria-label="notifications"
       >
         <Bell size={18} />
-        {unread > 0 && (
-          <span className="absolute -top-1 -right-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-accent px-1 text-[10px] font-black text-white">
+        {unread > 0 ? (
+          <Box
+            as="span"
+            className="absolute -top-1 -right-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-accent px-1 text-[10px] font-black text-white"
+          >
             {unread}
-          </span>
-        )}
-      </button>
-      {open && (
-        <div className="absolute end-0 z-50 mt-2 w-80 max-h-96 overflow-auto rounded-3xl border border-brand-border bg-white p-3 shadow-2xl">
-          <div className="flex items-center justify-between px-2 pb-2">
-            <h4 className="text-sm font-black text-brand-black">{t('title')}</h4>
-          </div>
+          </Box>
+        ) : null}
+      </Button>
+      {open ? (
+        <Card className="absolute end-0 z-50 mt-2 w-80 max-h-96 overflow-auto rounded-3xl border-brand-border bg-white p-3 shadow-2xl">
+          <Flex align="center" justify="between" className="px-2 pb-2">
+            <Typography as="h4" variant="small" className="font-black text-brand-black">
+              {t('title')}
+            </Typography>
+          </Flex>
           {items.length === 0 ? (
-            <p className="px-2 py-6 text-center text-xs font-bold text-brand-slate">{t('empty')}</p>
+            <Typography
+              as="p"
+              variant="muted"
+              className="px-2 py-6 text-center text-xs font-bold"
+            >
+              {t('empty')}
+            </Typography>
           ) : (
-            <ul className="space-y-2">
+            <Stack as="ul" gap={2} className="list-none">
               {items.map((n) => (
-                <li
+                <Box
                   key={n.id}
+                  as="li"
                   className={`rounded-2xl border p-3 text-xs ${
-                    n.read ? 'border-brand-border bg-white' : 'border-brand-accent/30 bg-brand-accent/5'
+                    n.read
+                      ? 'border-brand-border bg-white'
+                      : 'border-brand-accent/30 bg-brand-accent/5'
                   }`}
                 >
-                  <p className="font-black text-brand-black">{n.title}</p>
-                  {n.body && <p className="mt-1 text-brand-slate">{n.body}</p>}
-                </li>
+                  <Typography as="p" variant="small" className="font-black text-brand-black">
+                    {n.title}
+                  </Typography>
+                  {n.body ? (
+                    <Typography as="p" variant="muted" className="mt-1">
+                      {n.body}
+                    </Typography>
+                  ) : null}
+                </Box>
               ))}
-            </ul>
+            </Stack>
           )}
-        </div>
-      )}
-    </div>
+        </Card>
+      ) : null}
+    </Box>
   );
 }

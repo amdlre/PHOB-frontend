@@ -1,4 +1,5 @@
 import { getTranslations } from 'next-intl/server';
+import { Stack, Typography } from '@amdlre/design-system';
 import { api } from '@/lib/api/fetcher';
 import { ENDPOINTS } from '@/lib/api/endpoints';
 import { CleaningRequestForm } from '@/components/forms/cleaning-request-form';
@@ -14,9 +15,11 @@ export default async function NewRequestPage() {
     properties = [];
   }
   return (
-    <div className="mx-auto max-w-3xl space-y-6 pb-24">
-      <h1 className="text-3xl font-black tracking-tight text-brand-black">{t('newRequest')}</h1>
+    <Stack gap={6} className="mx-auto max-w-3xl pb-24">
+      <Typography as="h1" variant="h1" className="text-3xl font-black tracking-tight text-brand-black">
+        {t('newRequest')}
+      </Typography>
       <CleaningRequestForm properties={properties} />
-    </div>
+    </Stack>
   );
 }

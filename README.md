@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PHOB — منصة بوف
 
-## Getting Started
+Hotel-grade cleaning subscription platform — Next.js 16 frontend (App Router, AMDLRE stack).
 
-First, run the development server:
+Migrated from the original Vite project at `../PHOB-frontend.vite-backup` while preserving the original brand language (indigo accent, premium-rounded cards, Cairo + Inter fonts, RTL Arabic-first UI).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Stack
+
+- **Next.js 16** (App Router, Turbopack, React 19, async params)
+- **@amdlre/design-system** (shadcn-based)
+- **Tailwind CSS v4** with PHOB brand tokens (`brand-black`, `brand-accent`, `brand-offwhite`, ...)
+- **next-intl** — Arabic (default) + English with full RTL/LTR
+- **React Hook Form + Zod + Server Actions** for every form
+- **Reusable fetch wrapper** in `src/lib/api/fetcher.ts` (SSR + client, httpOnly-cookie auth)
+- **Google Maps** picker via `@googlemaps/js-api-loader` (v2 functional API)
+- **Custom JWT auth** via FastAPI backend at `NEXT_PUBLIC_API_URL`
+
+## Routes
+
+```
+/[locale]
+├── /                       → redirects to /login or role dashboard
+├── /(auth)/login           → single login form (email or phone)
+├── /(auth)/register        → client registration
+├── /(client)/              → client area (role: client)
+│   ├── /dashboard
+│   ├── /properties           list
+│   ├── /properties/add
+│   ├── /properties/[id]
+│   ├── /subscriptions        list
+│   ├── /subscriptions/new
+│   ├── /requests             list
+│   ├── /requests/new
+│   └── /requests/[id]        countdown + guest-confirm + report
+└── /employee/              → employee/admin area
+    ├── /dashboard            stats + today's queue
+    ├── /requests             filterable list
+    ├── /requests/[id]        full client+property+sub view, status update, report upload
+    ├── /subscriptions
+    └── /properties
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The `(client)` route group keeps client paths short (`/dashboard` not `/client/dashboard`), while `employee/` is a real URL segment so client and employee dashboards don't collide.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Auth Flow
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- One login form for every role; the JWT response carries `user.role`.
+- After login, the user is redirected to `/dashboard` (client) or `/employee/dashboard` (employee/admin).
+- Tokens are stored in **httpOnly cookies** (`access_token`, `refresh_token`).
+- Middleware protects all non-public routes and redirects authenticated users away from `/login` and `/register`.
 
-## Learn More
+## Environment
 
-To learn more about Next.js, take a look at the following resources:
+Copy `.env.example` to `.env.local` and fill in:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=...
+JWT_SECRET=match_backend_secret
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Develop
 
-## Deploy on Vercel
+```bash
+npm install
+npm run dev          # → http://localhost:3000/ar
+npm run build        # production build (Turbopack)
+npm run lint
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Backend Endpoints
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+All endpoints are listed in `src/lib/api/endpoints.ts`. Auth, properties, subscriptions, requests, reports, notifications. The fetcher automatically attaches the bearer token on the server, and forwards cookies on the client.
+
+## Migration Notes
+
+- Original Vite source preserved at `/Users/basil/Desktop/AMD/phob/PHOB-frontend.vite-backup`.
+- Brand tokens (`brand-black`, `brand-accent`, etc.) ported into `globals.css` so the design language matches the original.
+- All in-memory mock data removed — every page calls FastAPI via the `api` wrapper.
+- Role selection on the login page replaced with a single form; role comes from the JWT payload.

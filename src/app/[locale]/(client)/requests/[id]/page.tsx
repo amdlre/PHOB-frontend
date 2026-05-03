@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { Calendar, FileText, Home } from 'lucide-react';
+import { Box, Flex, Grid, Stack, Typography } from '@amdlre/design-system';
 import { api } from '@/lib/api/fetcher';
 import { ENDPOINTS } from '@/lib/api/endpoints';
 import { formatDateTime } from '@/lib/utils';
@@ -25,9 +26,11 @@ export default async function ClientRequestDetailPage({ params }: Props) {
     request = res.data;
   } catch {
     return (
-      <div className="card-premium p-12 text-center">
-        <p className="text-sm font-bold text-brand-slate">{t('noRequests')}</p>
-      </div>
+      <Box className="card-premium p-12 text-center">
+        <Typography as="p" variant="small" className="text-sm font-bold text-brand-slate">
+          {t('noRequests')}
+        </Typography>
+      </Box>
     );
   }
 
@@ -42,16 +45,20 @@ export default async function ClientRequestDetailPage({ params }: Props) {
   const showCountdown = ['scheduled', 'awaiting_guest_confirmation'].includes(r.status);
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 pb-24">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-black tracking-tight text-brand-black">{t('details')}</h1>
-          <p className="text-xs font-bold text-brand-slate">#{r.id}</p>
-        </div>
+    <Stack gap={6} className="mx-auto max-w-4xl pb-24">
+      <Flex wrap="wrap" align="center" justify="between" gap={4}>
+        <Stack gap={1}>
+          <Typography as="h1" variant="h1" className="text-3xl font-black tracking-tight text-brand-black">
+            {t('details')}
+          </Typography>
+          <Typography as="p" variant="small" className="text-xs font-bold text-brand-slate">
+            #{r.id}
+          </Typography>
+        </Stack>
         <RequestStatusBadge status={r.status} />
-      </div>
+      </Flex>
 
-      <div className="card-premium grid gap-4 p-8 sm:grid-cols-2">
+      <Grid gap={4} className="card-premium p-8 sm:grid-cols-2">
         <Detail icon={<Home size={16} />} label={t('selectProperty')} value={r.property_name} />
         <Detail
           icon={<Calendar size={16} />}
@@ -60,7 +67,7 @@ export default async function ClientRequestDetailPage({ params }: Props) {
         />
         <Detail icon={<FileText size={16} />} label={t('type')} value={r.cleaning_type ? t(`types.${r.cleaning_type}` as 'types.regular') : undefined} />
         <Detail icon={<FileText size={16} />} label={t('notes')} value={r.notes} />
-      </div>
+      </Grid>
 
       {showCountdown && (
         <GuestConfirmButton
@@ -74,23 +81,27 @@ export default async function ClientRequestDetailPage({ params }: Props) {
         <VisitReportView report={report} />
       ) : (
         r.status === 'completed' && (
-          <div className="card-premium p-8 text-center">
-            <p className="text-sm font-bold text-brand-slate">{tr('noReport')}</p>
-          </div>
+          <Box className="card-premium p-8 text-center">
+            <Typography as="p" variant="small" className="text-sm font-bold text-brand-slate">
+              {tr('noReport')}
+            </Typography>
+          </Box>
         )
       )}
-    </div>
+    </Stack>
   );
 }
 
 function Detail({ icon, label, value }: { icon: React.ReactNode; label: string; value?: string }) {
   return (
-    <div className="space-y-1">
-      <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-        {icon}
-        <span>{label}</span>
-      </div>
-      <p className="text-sm font-bold text-brand-black">{value || '—'}</p>
-    </div>
+    <Stack gap={1}>
+      <Flex align="center" gap={2} className="text-[10px] font-black uppercase tracking-widest text-brand-slate">
+        <>{icon}</>
+        <Box as="span">{label}</Box>
+      </Flex>
+      <Typography as="p" variant="small" className="text-sm font-bold text-brand-black">
+        {value || '—'}
+      </Typography>
+    </Stack>
   );
 }

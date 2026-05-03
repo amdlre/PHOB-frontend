@@ -8,7 +8,6 @@ export const propertySchema = z.object({
   address: z.string().optional(),
   lat: z.number().optional(),
   lng: z.number().optional(),
-  images: z.array(z.string()).default([]),
 });
 
 export type PropertyFormData = z.infer<typeof propertySchema>;

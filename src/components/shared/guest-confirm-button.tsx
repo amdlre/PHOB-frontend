@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { CheckCircle2 } from 'lucide-react';
+import { Button, Card, CardContent, Flex, Stack, Typography } from '@amdlre/design-system';
 import { CountdownTimer } from './countdown-timer';
 import { confirmGuestCheckoutAction } from '@/actions/requests';
 
@@ -24,10 +25,16 @@ export function GuestConfirmButton({ requestId, scheduledAt, alreadyConfirmed }:
 
   if (alreadyConfirmed) {
     return (
-      <div className="flex items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-700">
+      <Flex
+        align="center"
+        gap={2}
+        className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-700"
+      >
         <CheckCircle2 size={16} />
-        <span>{t('guestConfirmedAt')}</span>
-      </div>
+        <Typography as="span" variant="small">
+          {t('guestConfirmedAt')}
+        </Typography>
+      </Flex>
     );
   }
 
@@ -44,23 +51,35 @@ export function GuestConfirmButton({ requestId, scheduledAt, alreadyConfirmed }:
   };
 
   return (
-    <div className="card-premium flex flex-col items-center gap-4 p-6">
-      <CountdownTimer
-        targetIso={scheduledAt}
-        prefix={t('countdownPrefix')}
-        onReady={() => setEnabled(true)}
-      />
-      {!enabled && <p className="text-xs font-bold text-brand-slate">{t('guestConfirmHint')}</p>}
-      {error && <p className="text-xs font-bold text-red-500">{error}</p>}
-      <button
-        type="button"
-        onClick={click}
-        disabled={!enabled || pending}
-        className="flex items-center gap-2 rounded-2xl bg-brand-accent px-6 py-3 text-sm font-black text-white shadow-lg transition-all hover:bg-brand-black active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        <CheckCircle2 size={16} />
-        <span>{pending ? '...' : t('guestConfirm')}</span>
-      </button>
-    </div>
+    <Card className="card-premium">
+      <CardContent className="p-6">
+        <Stack gap={4} align="center">
+          <CountdownTimer
+            targetIso={scheduledAt}
+            prefix={t('countdownPrefix')}
+            onReady={() => setEnabled(true)}
+          />
+          {!enabled ? (
+            <Typography as="p" variant="small" className="text-xs font-bold text-brand-slate">
+              {t('guestConfirmHint')}
+            </Typography>
+          ) : null}
+          {error ? (
+            <Typography as="p" variant="small" className="text-xs font-bold text-red-500">
+              {error}
+            </Typography>
+          ) : null}
+          <Button
+            type="button"
+            onClick={click}
+            disabled={!enabled || pending}
+            leftIcon={<CheckCircle2 size={16} />}
+            className="rounded-2xl bg-brand-accent px-6 py-3 text-sm font-black text-white shadow-lg hover:bg-brand-black disabled:opacity-50"
+          >
+            {pending ? '...' : t('guestConfirm')}
+          </Button>
+        </Stack>
+      </CardContent>
+    </Card>
   );
 }

@@ -1,8 +1,7 @@
 import { redirect } from 'next/navigation';
-import { Building2, Calendar, Home, Sparkles } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { getCurrentUser } from '@/lib/auth/session';
-import { DashboardShell } from '@/components/layout/dashboard-shell';
+import { DashboardShell, type NavItem } from '@/components/layout/dashboard-shell';
 import type { PageProps } from '@/types';
 
 export default async function ClientLayout({
@@ -16,11 +15,11 @@ export default async function ClientLayout({
 
   const t = await getTranslations('nav');
 
-  const navItems = [
-    { href: `/${locale}/dashboard`, label: t('dashboard'), icon: Home },
-    { href: `/${locale}/properties`, label: t('properties'), icon: Building2 },
-    { href: `/${locale}/subscriptions`, label: t('subscriptions'), icon: Sparkles },
-    { href: `/${locale}/requests`, label: t('requests'), icon: Calendar },
+  const navItems: NavItem[] = [
+    { href: `/${locale}/dashboard`, label: t('dashboard'), icon: 'home' },
+    { href: `/${locale}/properties`, label: t('properties'), icon: 'building' },
+    { href: `/${locale}/subscriptions`, label: t('subscriptions'), icon: 'sparkles' },
+    { href: `/${locale}/requests`, label: t('requests'), icon: 'calendar' },
   ];
 
   return (

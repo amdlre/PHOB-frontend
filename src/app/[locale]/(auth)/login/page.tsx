@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Flex } from '@amdlre/design-system';
 import { generateSiteMetadata } from '@/lib/seo/metadata';
 import { LoginForm } from '@/components/forms/login-form';
 import type { PageProps } from '@/types';
@@ -14,8 +15,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center px-6 py-16">
+    <Flex align="center" justify="center" className="min-h-screen px-6 py-16">
       <LoginForm />
-    </div>
+    </Flex>
   );
 }

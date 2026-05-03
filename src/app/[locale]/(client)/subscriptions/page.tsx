@@ -1,6 +1,18 @@
 import Link from 'next/link';
 import { Plus, Sparkles } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
+import {
+  Box,
+  Flex,
+  Stack,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@amdlre/design-system';
 import { api } from '@/lib/api/fetcher';
 import { ENDPOINTS } from '@/lib/api/endpoints';
 import { formatDate } from '@/lib/utils';
@@ -27,63 +39,75 @@ export default async function ClientSubscriptionsPage({ params }: PageProps) {
   }
 
   return (
-    <div className="space-y-6 pb-24">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-black tracking-tight text-brand-black">{t('title')}</h1>
+    <Stack gap={6} className="pb-24">
+      <Flex align="center" justify="between">
+        <Typography as="h1" variant="h1" className="text-3xl font-black tracking-tight text-brand-black">
+          {t('title')}
+        </Typography>
         <Link href={`/${locale}/subscriptions/new`} className="btn-primary">
           <Plus size={16} />
-          <span>{t('newSubscription')}</span>
+          <Box as="span">{t('newSubscription')}</Box>
         </Link>
-      </div>
+      </Flex>
 
       {subs.length === 0 ? (
-        <div className="card-premium flex flex-col items-center gap-4 p-16 text-center">
+        <Flex direction="col" align="center" gap={4} className="card-premium p-16 text-center">
           <Sparkles size={40} className="text-brand-slate" strokeWidth={1.5} />
-          <p className="text-sm font-bold text-brand-slate">{t('noSubscriptions')}</p>
-        </div>
+          <Typography as="p" variant="small" className="text-sm font-bold text-brand-slate">
+            {t('noSubscriptions')}
+          </Typography>
+        </Flex>
       ) : (
-        <div className="card-premium overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-brand-offwhite text-right">
-              <tr>
-                <Th>{t('selectProperty')}</Th>
-                <Th>{t('package')}</Th>
-                <Th>{t('startDate')}</Th>
-                <Th>{t('endDate')}</Th>
-                <Th>{t('status')}</Th>
-              </tr>
-            </thead>
-            <tbody>
+        <Box className="card-premium overflow-hidden">
+          <Table className="w-full">
+            <TableHeader className="bg-brand-offwhite text-right">
+              <TableRow>
+                <TableHead className="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-brand-slate">
+                  {t('selectProperty')}
+                </TableHead>
+                <TableHead className="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-brand-slate">
+                  {t('package')}
+                </TableHead>
+                <TableHead className="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-brand-slate">
+                  {t('startDate')}
+                </TableHead>
+                <TableHead className="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-brand-slate">
+                  {t('endDate')}
+                </TableHead>
+                <TableHead className="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-brand-slate">
+                  {t('status')}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {subs.map((s) => (
-                <tr key={s.id} className="border-t border-brand-border text-right text-sm">
-                  <Td>{s.property_name || s.property_id}</Td>
-                  <Td>{s.package_name || s.package_id}</Td>
-                  <Td>{formatDate(s.start_date, locale)}</Td>
-                  <Td>{formatDate(s.end_date, locale)}</Td>
-                  <Td>
-                    <span
+                <TableRow key={s.id} className="border-t border-brand-border text-right text-sm">
+                  <TableCell className="px-6 py-4 font-bold text-brand-black">
+                    {s.property_name || s.property_id}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 font-bold text-brand-black">
+                    {s.package_name || s.package_id}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 font-bold text-brand-black">
+                    {formatDate(s.start_date, locale)}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 font-bold text-brand-black">
+                    {formatDate(s.end_date, locale)}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 font-bold text-brand-black">
+                    <Box
+                      as="span"
                       className={`inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-wider ${STATUS_STYLES[s.status] ?? STATUS_STYLES.pending}`}
                     >
                       {t(`statuses.${s.status}` as `statuses.active`)}
-                    </span>
-                  </Td>
-                </tr>
+                    </Box>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </TableBody>
+          </Table>
+        </Box>
       )}
-    </div>
+    </Stack>
   );
-}
-
-function Th({ children }: { children: React.ReactNode }) {
-  return (
-    <th className="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-      {children}
-    </th>
-  );
-}
-function Td({ children }: { children: React.ReactNode }) {
-  return <td className="px-6 py-4 font-bold text-brand-black">{children}</td>;
 }

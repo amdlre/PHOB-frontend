@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Calendar, Plus } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
+import { Box, Flex, Stack, Typography } from '@amdlre/design-system';
 import { api } from '@/lib/api/fetcher';
 import { ENDPOINTS } from '@/lib/api/endpoints';
 import { formatDateTime } from '@/lib/utils';
@@ -21,39 +22,45 @@ export default async function ClientRequestsPage({ params }: PageProps) {
   }
 
   return (
-    <div className="space-y-6 pb-24">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-black tracking-tight text-brand-black">{t('myRequests')}</h1>
+    <Stack gap={6} className="pb-24">
+      <Flex align="center" justify="between">
+        <Typography as="h1" variant="h1" className="text-3xl font-black tracking-tight text-brand-black">
+          {t('myRequests')}
+        </Typography>
         <Link href={`/${locale}/requests/new`} className="btn-primary">
           <Plus size={16} />
-          <span>{t('newRequest')}</span>
+          <Box as="span">{t('newRequest')}</Box>
         </Link>
-      </div>
+      </Flex>
 
       {requests.length === 0 ? (
-        <div className="card-premium flex flex-col items-center gap-4 p-16 text-center">
+        <Flex direction="col" align="center" gap={4} className="card-premium p-16 text-center">
           <Calendar size={40} className="text-brand-slate" strokeWidth={1.5} />
-          <p className="text-sm font-bold text-brand-slate">{t('noRequests')}</p>
-        </div>
+          <Typography as="p" variant="small" className="text-sm font-bold text-brand-slate">
+            {t('noRequests')}
+          </Typography>
+        </Flex>
       ) : (
-        <div className="space-y-3">
+        <Stack gap={3}>
           {requests.map((r) => (
             <Link
               key={r.id}
               href={`/${locale}/requests/${r.id}`}
               className="card-premium flex flex-wrap items-center justify-between gap-4 p-6 transition-transform hover:-translate-y-0.5"
             >
-              <div className="space-y-1">
-                <p className="text-sm font-black text-brand-black">{r.property_name || r.property_id}</p>
-                <p className="text-xs font-bold text-brand-slate" dir="ltr">
+              <Stack gap={1}>
+                <Typography as="p" variant="small" className="text-sm font-black text-brand-black">
+                  {r.property_name || r.property_id}
+                </Typography>
+                <Typography as="p" variant="small" className="text-xs font-bold text-brand-slate" dir="ltr">
                   {formatDateTime(r.scheduled_at, locale)}
-                </p>
-              </div>
+                </Typography>
+              </Stack>
               <RequestStatusBadge status={r.status} />
             </Link>
           ))}
-        </div>
+        </Stack>
       )}
-    </div>
+    </Stack>
   );
 }

@@ -1,3 +1,4 @@
+import { Box, Typography } from '@amdlre/design-system';
 import { cn } from '@/lib/utils';
 
 interface LogoProps {
@@ -16,12 +17,21 @@ const sizeClasses: Record<string, string> = {
 
 export function Logo({ className, showDot = true, size = 'md' }: LogoProps) {
   return (
-    <span
-      className={cn('inline-flex items-center font-black leading-none tracking-tighter', sizeClasses[size], className)}
+    <Typography
+      as="span"
+      className={cn(
+        'inline-flex items-center font-black leading-none tracking-tighter',
+        sizeClasses[size],
+        className,
+      )}
       dir="ltr"
     >
       PHOB
-      {showDot && <span className="ml-0.5 text-brand-accent">.</span>}
-    </span>
+      {showDot ? (
+        <Box as="span" className="ml-0.5 text-brand-accent">
+          .
+        </Box>
+      ) : null}
+    </Typography>
   );
 }
