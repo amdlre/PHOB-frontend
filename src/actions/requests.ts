@@ -67,3 +67,34 @@ export async function confirmGuestCheckoutAction(id: string): Promise<ActionResu
     return { success: false, message: 'حدث خطأ غير متوقع' };
   }
 }
+
+export async function updateCleaningRequestAction(
+  id: string,
+  input: {
+    scheduled_at?: string;
+    cleaning_type?: 'regular' | 'deep' | 'checkout';
+    notes?: string;
+  },
+): Promise<ActionResult & { request?: CleaningRequest }> {
+  try {
+    const res = await api.patch<CleaningRequest>(ENDPOINTS.requests.update(id), input);
+    revalidatePath('/requests');
+    revalidatePath(`/requests/${id}`);
+    return { success: true, request: res.data };
+  } catch (err) {
+    if (err instanceof ApiException) return { success: false, message: err.message };
+    return { success: false, message: 'حدث خطأ غير متوقع' };
+  }
+}
+
+export async function deleteCleaningRequestAction(id: string): Promise<ActionResult> {
+  try {
+    await api.delete(ENDPOINTS.requests.delete(id));
+    revalidatePath('/requests');
+    revalidatePath('/dashboard');
+    return { success: true };
+  } catch (err) {
+    if (err instanceof ApiException) return { success: false, message: err.message };
+    return { success: false, message: 'حدث خطأ غير متوقع' };
+  }
+}

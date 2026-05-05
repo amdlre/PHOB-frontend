@@ -16,27 +16,38 @@ import {
   type WizardFormStep,
 } from '@amdlre/design-system';
 import { propertySchema, type PropertyFormData } from '@/lib/validations/property';
-import { createPropertyAction } from '@/actions/properties';
+import { createPropertyAction, updatePropertyAction } from '@/actions/properties';
 import { GoogleMapPicker } from '@/components/shared/google-map-picker';
 import { ImageUploader } from '@/components/shared/image-uploader';
+import type { Property } from '@/types/domain';
 
-export function PropertyForm() {
+interface Props {
+  /** Pass an existing property to render the form in edit mode. */
+  property?: Property;
+}
+
+export function PropertyForm({ property }: Props = {}) {
   const t = useTranslations('property');
   const tWiz = useTranslations('dashboard.wizard');
   const router = useRouter();
   const params = useParams<{ locale: string }>();
   const [, startTransition] = useTransition();
-  const [images, setImages] = useState<string[]>([]);
-  const [coords, setCoords] = useState<{ lat?: number; lng?: number }>({});
+  const isEdit = !!property;
+  const [images, setImages] = useState<string[]>(property?.images ?? []);
+  const [coords, setCoords] = useState<{ lat?: number; lng?: number }>({
+    lat: property?.lat,
+    lng: property?.lng,
+  });
 
   const form = useForm<PropertyFormData>({
-    resolver: zodResolver(propertySchema),
+    // zod v4 + DS's bundled RHF version differ on input/output inference; the runtime contract is correct.
+    resolver: zodResolver(propertySchema) as never,
     defaultValues: {
-      building_name: '',
-      floor_number: '',
-      unit_number: '',
-      door_code: '',
-      address: '',
+      building_name: property?.building_name ?? '',
+      floor_number: property?.floor_number ?? '',
+      unit_number: property?.unit_number ?? '',
+      door_code: property?.door_code ?? '',
+      address: property?.address ?? '',
     },
     mode: 'onBlur',
   });
@@ -70,22 +81,33 @@ export function PropertyForm() {
       // The DS bundles a different RHF version under its own node_modules; runtime is fine, types diverge.
       form={form as never}
       steps={steps as never}
-      labels={{ back: tWiz('back'), next: tWiz('next'), submit: t('addProperty') }}
+      labels={{
+        back: tWiz('back'),
+        next: tWiz('next'),
+        submit: isEdit ? t('editProperty') : t('addProperty'),
+      }}
       onComplete={async (rawValues) =>
         new Promise((resolve) => {
           const values = rawValues as PropertyFormData;
           startTransition(async () => {
-            const res = await createPropertyAction({
+            const payload = {
               ...values,
               images,
               lat: coords.lat,
               lng: coords.lng,
-            });
+            };
+            const res = isEdit
+              ? await updatePropertyAction(property!.id, payload)
+              : await createPropertyAction(payload);
             if (!res.success) {
               resolve({ message: res.message || 'حدث خطأ' });
               return;
             }
-            router.push(`/${params.locale}/properties`);
+            router.push(
+              isEdit
+                ? `/${params.locale}/properties/${property!.id}`
+                : `/${params.locale}/properties`,
+            );
             router.refresh();
             resolve();
           });

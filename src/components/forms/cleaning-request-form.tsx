@@ -19,15 +19,20 @@ import {
   WizardForm,
   type WizardFormStep,
 } from '@amdlre/design-system';
-import { createCleaningRequestAction } from '@/actions/requests';
+import {
+  createCleaningRequestAction,
+  updateCleaningRequestAction,
+} from '@/actions/requests';
 import {
   cleaningRequestSchema,
   type CleaningRequestFormData,
 } from '@/lib/validations/request';
-import type { Property } from '@/types/domain';
+import type { CleaningRequest, Property } from '@/types/domain';
 
 interface Props {
   properties: Property[];
+  /** Pass an existing request to render the form in edit mode. */
+  request?: CleaningRequest;
 }
 
 function defaultScheduledAt(): string {
@@ -36,12 +41,13 @@ function defaultScheduledAt(): string {
   return d.toISOString().slice(0, 16);
 }
 
-export function CleaningRequestForm({ properties }: Props) {
+export function CleaningRequestForm({ properties, request }: Props) {
   const t = useTranslations('request');
   const tWiz = useTranslations('dashboard.wizard');
   const router = useRouter();
   const params = useParams<{ locale: string }>();
   const [, startTransition] = useTransition();
+  const isEdit = !!request;
 
   const subscribed = properties.filter((p) => p.has_active_subscription);
 
@@ -49,10 +55,10 @@ export function CleaningRequestForm({ properties }: Props) {
     // zod v4 + DS's bundled RHF version differ on input/output inference; the runtime contract is correct.
     resolver: zodResolver(cleaningRequestSchema) as never,
     defaultValues: {
-      property_id: subscribed[0]?.id ?? '',
-      scheduled_at: defaultScheduledAt(),
-      cleaning_type: 'checkout',
-      notes: '',
+      property_id: request?.property_id ?? subscribed[0]?.id ?? '',
+      scheduled_at: request?.scheduled_at?.slice(0, 16) ?? defaultScheduledAt(),
+      cleaning_type: request?.cleaning_type ?? 'checkout',
+      notes: request?.notes ?? '',
     },
     mode: 'onBlur',
   });
@@ -95,10 +101,16 @@ export function CleaningRequestForm({ properties }: Props) {
             const values = rawValues as CleaningRequestFormData;
             setSubmitting(true);
             startTransition(async () => {
-              const res = await createCleaningRequestAction({
-                ...values,
-                scheduled_at: new Date(values.scheduled_at).toISOString(),
-              });
+              const res = isEdit
+                ? await updateCleaningRequestAction(request!.id, {
+                    scheduled_at: new Date(values.scheduled_at).toISOString(),
+                    cleaning_type: values.cleaning_type,
+                    notes: values.notes,
+                  })
+                : await createCleaningRequestAction({
+                    ...values,
+                    scheduled_at: new Date(values.scheduled_at).toISOString(),
+                  });
               setSubmitting(false);
               if (!res.success) {
                 resolve({ message: res.message || t('rules.min12h') });

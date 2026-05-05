@@ -24,6 +24,15 @@
     "actions": "إجراءات",
     "currency": "ريال",
     "perMonth": "/ شهر",
+    "rowActions": {
+      "view": "عرض",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "deleteConfirmTitle": "تأكيد الحذف",
+      "deleteConfirmBody": "هل أنت متأكد من حذف هذا العنصر؟ لا يمكن التراجع عن هذا الإجراء.",
+      "deleteSuccess": "تم الحذف بنجاح",
+      "deleteFailed": "تعذر الحذف"
+    },
     "error": {
       "title": "حدث خطأ",
       "description": "عذراً، حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.",
@@ -178,6 +187,7 @@
   "subscription": {
     "title": "الاشتراكات",
     "newSubscription": "اشتراك جديد",
+    "editSubscription": "تعديل الاشتراك",
     "selectProperty": "اختر الوحدة",
     "selectPackage": "اختر الباقة",
     "startDate": "تاريخ البداية",
@@ -205,6 +215,7 @@
   "request": {
     "title": "طلبات النظافة",
     "newRequest": "طلب جديد",
+    "editRequest": "تعديل الطلب",
     "selectProperty": "اختر الوحدة",
     "scheduledAt": "موعد الزيارة",
     "scheduledDate": "تاريخ الزيارة",

@@ -24,6 +24,15 @@
     "actions": "Actions",
     "currency": "SAR",
     "perMonth": "/ month",
+    "rowActions": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteConfirmTitle": "Confirm deletion",
+      "deleteConfirmBody": "Are you sure you want to delete this item? This action cannot be undone.",
+      "deleteSuccess": "Deleted successfully",
+      "deleteFailed": "Could not delete"
+    },
     "error": {
       "title": "Something went wrong",
       "description": "Sorry, an unexpected error occurred. Please try again.",
@@ -178,6 +187,7 @@
   "subscription": {
     "title": "Subscriptions",
     "newSubscription": "New Subscription",
+    "editSubscription": "Edit Subscription",
     "selectProperty": "Select Property",
     "selectPackage": "Select Package",
     "startDate": "Start Date",
@@ -205,6 +215,7 @@
   "request": {
     "title": "Cleaning Requests",
     "newRequest": "New Request",
+    "editRequest": "Edit Request",
     "selectProperty": "Select Property",
     "scheduledAt": "Scheduled At",
     "scheduledDate": "Scheduled Date",

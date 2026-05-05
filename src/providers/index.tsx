@@ -5,14 +5,6 @@ import type { AmdlreTheme } from '@amdlre/design-system';
 import { AuthProvider } from './auth-provider';
 import type { User } from '@/types/auth';
 
-// ─── PHOB Design System Theme ────────────────────────────────────────────────
-// Colors extracted from https://phob-so74vb.cranl.net
-// Brand tokens: --color-brand-black, --color-brand-offwhite,
-//               --color-brand-accent, --color-brand-slate, --color-brand-border
-// Dark palette: #0f172a (bg), #1e293b (surface), #1b2b48 (card)
-// Fonts:        Inter + IBM Plex Sans Arabic / JetBrains Mono
-// ─────────────────────────────────────────────────────────────────────────────
-
 const phobTheme: AmdlreTheme = {
   colors: {
     background: '210 17% 98%',
@@ -72,10 +64,7 @@ const phobTheme: AmdlreTheme = {
     popoverForeground: '210 40% 98%',
   },
 
-  fonts: {
-    sans: '"IBM Plex Sans Arabic", system-ui, sans-serif',
-    heading: '"IBM Plex Sans Arabic", system-ui, sans-serif',
-  },
+
 };
 interface ProvidersProps {
   children: React.ReactNode;

@@ -45,12 +45,6 @@
   --radius-3xl: 1.5rem;
   --radius-4xl: 2rem;
   --radius-5xl: 2.5rem;
-
-  /* Wire next/font CSS variables (set in app layout body) into Tailwind's
-     `font-sans`. Without this, components fall back to ui-sans-serif and
-     Cairo never gets used despite being loaded. */
-  --font-sans: var(--font-cairo), 'Cairo', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-inter), ui-monospace, SFMono-Regular, monospace;
 }
 
 @utility ring-offset-background {

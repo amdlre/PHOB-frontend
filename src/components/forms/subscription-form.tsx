@@ -22,12 +22,14 @@ import {
   type WizardFormStep,
 } from '@amdlre/design-system';
 import { PACKAGES } from '@/constants/packages';
-import { createSubscriptionAction } from '@/actions/subscriptions';
+import { createSubscriptionAction, updateSubscriptionAction } from '@/actions/subscriptions';
 import { subscriptionSchema, type SubscriptionFormData } from '@/lib/validations/subscription';
-import type { Property } from '@/types/domain';
+import type { Property, Subscription } from '@/types/domain';
 
 interface Props {
   properties: Property[];
+  /** Pass an existing subscription to render the form in edit mode. */
+  subscription?: Subscription;
 }
 
 function todayPlus(days: number): string {
@@ -36,22 +38,23 @@ function todayPlus(days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-export function SubscriptionForm({ properties }: Props) {
+export function SubscriptionForm({ properties, subscription }: Props) {
   const t = useTranslations('subscription');
   const tc = useTranslations('common');
   const tWiz = useTranslations('dashboard.wizard');
   const router = useRouter();
   const params = useParams<{ locale: string }>();
+  const isEdit = !!subscription;
 
   const form = useForm<SubscriptionFormData>({
     // zod v4 + DS's bundled RHF version differ on input/output inference; the runtime contract is correct.
     resolver: zodResolver(subscriptionSchema) as never,
     defaultValues: {
-      property_id: properties[0]?.id ?? '',
-      package_id: 'one_br',
-      start_date: todayPlus(3),
-      end_date: todayPlus(33),
-      is_renewal: false,
+      property_id: subscription?.property_id ?? properties[0]?.id ?? '',
+      package_id: subscription?.package_id ?? 'one_br',
+      start_date: subscription?.start_date ?? todayPlus(3),
+      end_date: subscription?.end_date ?? todayPlus(33),
+      is_renewal: subscription?.is_renewal ?? false,
     },
     mode: 'onBlur',
   });
@@ -89,11 +92,21 @@ export function SubscriptionForm({ properties }: Props) {
       // The DS bundles a different RHF version under its own node_modules; runtime is fine, types diverge.
       form={form as never}
       steps={steps as never}
-      labels={{ back: tWiz('back'), next: tWiz('next'), submit: t('confirmSubscription') }}
+      labels={{
+        back: tWiz('back'),
+        next: tWiz('next'),
+        submit: t('confirmSubscription'),
+      }}
       onComplete={async (rawValues) => {
         const values = rawValues as SubscriptionFormData;
         setSubmitting(true);
-        const res = await createSubscriptionAction({ ...values, is_renewal: isRenewal });
+        const res = isEdit
+          ? await updateSubscriptionAction(subscription!.id, {
+              package_id: values.package_id,
+              start_date: values.start_date,
+              end_date: values.end_date,
+            })
+          : await createSubscriptionAction({ ...values, is_renewal: isRenewal });
         setSubmitting(false);
         if (!res.success) return { message: res.message || 'حدث خطأ' };
         router.push(`/${params.locale}/subscriptions`);

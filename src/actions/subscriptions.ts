@@ -56,3 +56,34 @@ export async function createSubscriptionAction(input: {
     return { success: false, message: 'حدث خطأ غير متوقع' };
   }
 }
+
+export async function updateSubscriptionAction(
+  id: string,
+  input: {
+    package_id?: 'studio' | 'one_br' | 'two_br' | 'basic' | 'standard' | 'premium';
+    start_date?: string;
+    end_date?: string;
+  },
+): Promise<ActionResult & { subscription?: Subscription }> {
+  try {
+    const res = await api.patch<Subscription>(ENDPOINTS.subscriptions.update(id), input);
+    revalidatePath('/subscriptions');
+    revalidatePath(`/subscriptions/${id}`);
+    return { success: true, subscription: res.data };
+  } catch (err) {
+    if (err instanceof ApiException) return { success: false, message: err.message };
+    return { success: false, message: 'حدث خطأ غير متوقع' };
+  }
+}
+
+export async function deleteSubscriptionAction(id: string): Promise<ActionResult> {
+  try {
+    await api.delete(ENDPOINTS.subscriptions.delete(id));
+    revalidatePath('/subscriptions');
+    revalidatePath('/dashboard');
+    return { success: true };
+  } catch (err) {
+    if (err instanceof ApiException) return { success: false, message: err.message };
+    return { success: false, message: 'حدث خطأ غير متوقع' };
+  }
+}

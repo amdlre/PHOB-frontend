@@ -6,14 +6,19 @@ import { MapPin } from 'lucide-react';
 import type { DataTableColumnDef } from '@amdlre/design-system';
 
 import { EntityTable } from '@/components/shared/entity-table';
+import { RowActions } from '@/components/dashboard/row-actions';
+import { deletePropertyAction } from '@/actions/properties';
 import type { Property } from '@/types/domain';
 
 interface Props {
   properties: (Property & { owner_name?: string; owner_phone?: string })[];
+  /** Base href for view/edit links, e.g. `/ar/properties` (omit trailing slash). */
+  hrefBase: string;
 }
 
-export function PropertiesTable({ properties }: Props) {
+export function PropertiesTable({ properties, hrefBase }: Props) {
   const t = useTranslations('property');
+  const tTable = useTranslations('dashboard.dataTable');
 
   const columns = useMemo<
     DataTableColumnDef<Property & { owner_name?: string; owner_phone?: string }, unknown>[]
@@ -104,8 +109,23 @@ export function PropertiesTable({ properties }: Props) {
           );
         },
       },
+      {
+        id: 'actions',
+        header: tTable('actions'),
+        meta: { label: tTable('actions'), excludeFromExport: true },
+        enableSorting: false,
+        enableHiding: false,
+        cell: ({ row }) => (
+          <RowActions
+            viewHref={`${hrefBase}/${row.original.id}`}
+            editHref={`${hrefBase}/${row.original.id}/edit`}
+            onDelete={() => deletePropertyAction(row.original.id)}
+            itemLabel={row.original.building_name}
+          />
+        ),
+      },
     ],
-    [t],
+    [t, tTable, hrefBase],
   );
 
   const filterConfigs = useMemo(

@@ -5,11 +5,15 @@ import { useTranslations, useLocale } from 'next-intl';
 import type { DataTableColumnDef } from '@amdlre/design-system';
 
 import { EntityTable } from '@/components/shared/entity-table';
+import { RowActions } from '@/components/dashboard/row-actions';
+import { deleteSubscriptionAction } from '@/actions/subscriptions';
 import { formatDate } from '@/lib/utils';
 import type { Subscription, SubscriptionStatus } from '@/types/domain';
 
 interface Props {
   subscriptions: Subscription[];
+  /** Base href for view/edit links, e.g. `/ar/subscriptions`. */
+  hrefBase: string;
 }
 
 const STATUSES: SubscriptionStatus[] = ['active', 'pending', 'expired', 'cancelled'];
@@ -21,9 +25,10 @@ const STATUS_STYLES: Record<SubscriptionStatus, string> = {
   cancelled: 'bg-red-50 text-red-700 border-red-200',
 };
 
-export function SubscriptionsTable({ subscriptions }: Props) {
+export function SubscriptionsTable({ subscriptions, hrefBase }: Props) {
   const t = useTranslations('subscription');
   const ts = useTranslations('subscription.statuses');
+  const tTable = useTranslations('dashboard.dataTable');
   const locale = useLocale();
 
   const columns = useMemo<DataTableColumnDef<Subscription, unknown>[]>(
@@ -78,8 +83,23 @@ export function SubscriptionsTable({ subscriptions }: Props) {
           </span>
         ),
       },
+      {
+        id: 'actions',
+        header: tTable('actions'),
+        meta: { label: tTable('actions'), excludeFromExport: true },
+        enableSorting: false,
+        enableHiding: false,
+        cell: ({ row }) => (
+          <RowActions
+            viewHref={`${hrefBase}/${row.original.id}`}
+            editHref={`${hrefBase}/${row.original.id}/edit`}
+            onDelete={() => deleteSubscriptionAction(row.original.id)}
+            itemLabel={row.original.property_name}
+          />
+        ),
+      },
     ],
-    [t, ts, locale],
+    [t, ts, tTable, locale, hrefBase],
   );
 
   const filterConfigs = useMemo(

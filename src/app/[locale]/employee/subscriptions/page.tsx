@@ -5,7 +5,12 @@ import { ENDPOINTS } from '@/lib/api/endpoints';
 import { SubscriptionsTable } from '@/components/dashboard/subscriptions-table';
 import type { Subscription } from '@/types/domain';
 
-export default async function EmployeeSubscriptionsPage() {
+interface PageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export default async function EmployeeSubscriptionsPage({ params }: PageProps) {
+  const { locale } = await params;
   const t = await getTranslations('subscription');
 
   let subs: Subscription[] = [];
@@ -19,7 +24,10 @@ export default async function EmployeeSubscriptionsPage() {
   return (
     <Stack gap={6} className="pb-24">
       <HeaderInfo title={t('title')} />
-      <SubscriptionsTable subscriptions={subs} />
+      <SubscriptionsTable
+        subscriptions={subs}
+        hrefBase={`/${locale}/employee/subscriptions`}
+      />
     </Stack>
   );
 }

@@ -3,7 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import { Button, HeaderInfo, Stack } from '@amdlre/design-system';
 import { api } from '@/lib/api/fetcher';
 import { ENDPOINTS } from '@/lib/api/endpoints';
-import { OrdersList } from '@/components/dashboard/orders-list';
+import { RequestsTable } from '@/components/dashboard/requests-table';
 import type { CleaningRequest } from '@/types/domain';
 import type { PageProps } from '@/types';
 
@@ -29,7 +29,7 @@ export default async function ClientRequestsPage({ params }: PageProps) {
           </Button>
         }
       />
-      <OrdersList requests={requests} hrefBase={`/${locale}/requests`} />
+      <RequestsTable requests={requests} hrefBase={`/${locale}/requests`} />
     </Stack>
   );
 }

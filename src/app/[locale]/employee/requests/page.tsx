@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import { HeaderInfo, Stack } from '@amdlre/design-system';
 import { api } from '@/lib/api/fetcher';
 import { ENDPOINTS } from '@/lib/api/endpoints';
-import { OrdersList } from '@/components/dashboard/orders-list';
+import { RequestsTable } from '@/components/dashboard/requests-table';
 import type { CleaningRequest } from '@/types/domain';
 
 interface PageProps {
@@ -24,7 +24,7 @@ export default async function EmployeeRequestsPage({ params }: PageProps) {
   return (
     <Stack gap={6} className="pb-24">
       <HeaderInfo title={t('allRequests')} />
-      <OrdersList
+      <RequestsTable
         requests={requests}
         hrefBase={`/${locale}/employee/requests`}
         showClient

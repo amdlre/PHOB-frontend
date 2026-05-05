@@ -5,7 +5,12 @@ import { ENDPOINTS } from '@/lib/api/endpoints';
 import { PropertiesTable } from '@/components/dashboard/properties-table';
 import type { Property } from '@/types/domain';
 
-export default async function EmployeePropertiesPage() {
+interface PageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export default async function EmployeePropertiesPage({ params }: PageProps) {
+  const { locale } = await params;
   const t = await getTranslations('property');
 
   let properties: (Property & { owner_name?: string; owner_phone?: string })[] = [];
@@ -19,7 +24,7 @@ export default async function EmployeePropertiesPage() {
   return (
     <Stack gap={6} className="pb-24">
       <HeaderInfo title={t('allProperties')} />
-      <PropertiesTable properties={properties} />
+      <PropertiesTable properties={properties} hrefBase={`/${locale}/employee/properties`} />
     </Stack>
   );
 }

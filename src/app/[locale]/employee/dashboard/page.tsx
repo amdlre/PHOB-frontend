@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { CheckCircle2, Clock, Hourglass, Sparkles } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import {
@@ -14,9 +13,8 @@ import {
 import { api } from '@/lib/api/fetcher';
 import { ENDPOINTS } from '@/lib/api/endpoints';
 import { getCurrentUser } from '@/lib/auth/session';
-import { RequestStatusBadge } from '@/components/shared/request-status-badge';
 import { DashboardCharts } from '@/components/dashboard/dashboard-charts';
-import { formatDateTime } from '@/lib/utils';
+import { OrdersList } from '@/components/dashboard/orders-list';
 import type { CleaningRequest, Subscription } from '@/types/domain';
 import type { PageProps } from '@/types';
 
@@ -149,38 +147,11 @@ export default async function EmployeeDashboardPage({ params }: PageProps) {
         <Typography as="h2" variant="large" className="font-black">
           {t('todayRequests')}
         </Typography>
-        {upcoming.length === 0 ? (
-          <Card className="card-premium">
-            <CardContent className="p-8 text-center">
-              <Typography as="span" variant="small" className="font-bold text-brand-slate">
-                —
-              </Typography>
-            </CardContent>
-          </Card>
-        ) : (
-          upcoming.map((r) => (
-            <Link
-              key={r.id}
-              href={`/${locale}/employee/requests/${r.id}`}
-              className="card-premium flex flex-wrap items-center justify-between gap-3 p-4"
-            >
-              <Stack gap={1}>
-                <Typography as="span" variant="small" className="font-black">
-                  {r.property_name}
-                </Typography>
-                <Typography
-                  as="span"
-                  variant="muted"
-                  className="text-xs font-bold"
-                  dir="ltr"
-                >
-                  {formatDateTime(r.scheduled_at, locale)}
-                </Typography>
-              </Stack>
-              <RequestStatusBadge status={r.status} />
-            </Link>
-          ))
-        )}
+        <OrdersList
+          requests={upcoming}
+          hrefBase={`/${locale}/employee/requests`}
+          showClient
+        />
       </Stack>
     </Stack>
   );

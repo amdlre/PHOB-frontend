@@ -29,7 +29,7 @@ export default async function ClientSubscriptionsPage({ params }: PageProps) {
           </Button>
         }
       />
-      <SubscriptionsTable subscriptions={subs} />
+      <SubscriptionsTable subscriptions={subs} hrefBase={`/${locale}/subscriptions`} />
     </Stack>
   );
 }
