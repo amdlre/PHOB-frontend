@@ -28,10 +28,17 @@ export default function middleware(request: NextRequest) {
 
   const isAuthPage = AUTH_PATHS.some((p) => pathWithoutLocale === p);
 
-  // Redirect authenticated users away from auth pages
+  // Redirect authenticated users away from auth pages — but only when they
+  // landed there directly. If `callbackUrl` is present, a protected layout
+  // just bounced them here (likely because the API rejected the token).
+  // Bouncing them back would create an infinite redirect loop, so let the
+  // login page render and have them re-authenticate.
   if (isAuthPage && token) {
-    const locale = localeSegment || APP_CONFIG.i18n.defaultLocale;
-    return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url));
+    const callbackUrl = request.nextUrl.searchParams.get('callbackUrl');
+    if (!callbackUrl) {
+      const locale = localeSegment || APP_CONFIG.i18n.defaultLocale;
+      return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url));
+    }
   }
 
   // Protect dashboard / employee routes

@@ -6,7 +6,8 @@ export type RequestStatus =
   | 'awaiting_guest_confirmation'
   | 'in_progress'
   | 'completed'
-  | 'rejected';
+  | 'rejected'
+  | 'cancelled';
 
 export type CleaningType = 'regular' | 'deep' | 'checkout';
 

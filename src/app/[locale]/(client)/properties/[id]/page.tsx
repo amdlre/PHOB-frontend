@@ -1,6 +1,6 @@
 import { Building2, Hash, Layers, MapPin } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
-import { Box, Flex, Grid, Stack, Typography } from '@amdlre/design-system';
+import { Box, Flex, Grid, HeaderInfo, Stack, Typography } from '@amdlre/design-system';
 import { api } from '@/lib/api/fetcher';
 import { ENDPOINTS } from '@/lib/api/endpoints';
 import type { Property } from '@/types/domain';
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default async function PropertyDetailPage({ params }: Props) {
-  const { id } = await params;
+  const { id, locale } = await params;
   const t = await getTranslations('property');
 
   let property: Property | null = null;
@@ -31,9 +31,14 @@ export default async function PropertyDetailPage({ params }: Props) {
 
   return (
     <Stack gap={6} className="mx-auto max-w-4xl pb-24">
-      <Typography as="h1" variant="h1" className="text-3xl font-black tracking-tight text-brand-black">
-        {p.building_name}
-      </Typography>
+      <HeaderInfo
+        size="md"
+        title={p.building_name}
+        subtitle={[p.floor_number && `${t('floor')} ${p.floor_number}`, p.unit_number && `${t('unit')} ${p.unit_number}`]
+          .filter(Boolean)
+          .join(' · ')}
+        backHref={`/${locale}/properties`}
+      />
 
       {p.images?.length > 0 && (
         <Grid gap={3} className="md:grid-cols-3">

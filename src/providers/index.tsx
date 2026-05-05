@@ -73,9 +73,8 @@ const phobTheme: AmdlreTheme = {
   },
 
   fonts: {
-    sans: '"Inter", "IBM Plex Sans Arabic", system-ui, sans-serif',
-    heading: '"Inter", "IBM Plex Sans Arabic", system-ui, sans-serif',
-    mono: '"JetBrains Mono", ui-monospace, SFMono-Regular, monospace',
+    sans: '"IBM Plex Sans Arabic", system-ui, sans-serif',
+    heading: '"IBM Plex Sans Arabic", system-ui, sans-serif',
   },
 };
 interface ProvidersProps {

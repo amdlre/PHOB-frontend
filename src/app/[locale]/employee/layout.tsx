@@ -10,7 +10,11 @@ export default async function EmployeeLayout({
 }: PageProps & { children: React.ReactNode }) {
   const { locale } = await params;
   const user = await getCurrentUser();
-  if (!user) redirect(`/${locale}/login`);
+  if (!user) {
+    redirect(
+      `/${locale}/login?callbackUrl=${encodeURIComponent(`/${locale}/employee/dashboard`)}`,
+    );
+  }
   if (user.role === 'client') redirect(`/${locale}/dashboard`);
 
   const t = await getTranslations('nav');

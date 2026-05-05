@@ -1,4 +1,4 @@
-import { useTranslations } from 'next-intl';
+import { useMessages, useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { RequestStatus } from '@/types/domain';
 
@@ -9,25 +9,33 @@ const STATUS_STYLES: Record<RequestStatus, string> = {
   in_progress: 'bg-purple-50 text-purple-700 border-purple-200',
   completed: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   rejected: 'bg-red-50 text-red-700 border-red-200',
+  cancelled: 'bg-red-50 text-red-700 border-red-200',
 };
 
 export function RequestStatusBadge({
   status,
   className,
 }: {
-  status: RequestStatus;
+  status: RequestStatus | string;
   className?: string;
 }) {
   const t = useTranslations('request.statuses');
+  const messages = useMessages() as Record<string, unknown>;
+  // Backend may add new statuses before the frontend ships translations for them.
+  // Falling back to the raw key keeps the table rendering instead of crashing.
+  const statuses = (messages?.request as Record<string, unknown> | undefined)?.statuses as
+    | Record<string, string>
+    | undefined;
+  const label = statuses && status in statuses ? t(status as never) : status;
   return (
     <span
       className={cn(
         'inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-black uppercase tracking-wider',
-        STATUS_STYLES[status] || STATUS_STYLES.pending,
+        STATUS_STYLES[status as RequestStatus] || STATUS_STYLES.pending,
         className,
       )}
     >
-      {t(status)}
+      {label}
     </span>
   );
 }

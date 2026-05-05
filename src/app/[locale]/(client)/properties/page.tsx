@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Building2, MapPin, Plus } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
-import { Box, Flex, Grid, Stack, Typography } from '@amdlre/design-system';
+import { Box, Button, Flex, Grid, HeaderInfo, Stack, Typography } from '@amdlre/design-system';
 import { api } from '@/lib/api/fetcher';
 import { ENDPOINTS } from '@/lib/api/endpoints';
 import type { Property } from '@/types/domain';
@@ -22,15 +22,14 @@ export default async function ClientPropertiesPage({ params }: PageProps) {
 
   return (
     <Stack gap={6} className="pb-24">
-      <Flex align="center" justify="between">
-        <Typography as="h1" variant="h1" className="text-3xl font-black tracking-tight text-brand-black">
-          {t('myProperties')}
-        </Typography>
-        <Link href={`/${locale}/properties/add`} className="btn-primary">
-          <Plus size={16} />
-          <Box as="span">{t('addProperty')}</Box>
-        </Link>
-      </Flex>
+      <HeaderInfo
+        title={t('myProperties')}
+        actions={
+          <Button href={`/${locale}/properties/add`} leftIcon={<Plus size={16} />}>
+            {t('addProperty')}
+          </Button>
+        }
+      />
 
       {properties.length === 0 ? (
         <Flex direction="col" align="center" justify="center" gap={4} className="card-premium p-16 text-center">

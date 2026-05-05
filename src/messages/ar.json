@@ -87,7 +87,11 @@
       "quickActions": "إجراءات سريعة",
       "addProperty": "إضافة وحدة جديدة",
       "newRequest": "طلب نظافة جديد",
-      "newSubscription": "اشتراك جديد"
+      "newSubscription": "اشتراك جديد",
+      "trends": "تطور الطلبات",
+      "trendsSubtitle": "آخر 14 يوم",
+      "statusBreakdown": "توزيع حالات الطلبات",
+      "statusBreakdownSubtitle": "إجمالي الطلبات حسب الحالة"
     },
     "employee": {
       "title": "لوحة العمليات",
@@ -98,7 +102,51 @@
       "inProgress": "قيد التنفيذ",
       "completed": "منجزة",
       "expiringSubs": "اشتراكات تنتهي قريباً",
-      "pendingReports": "تقارير معلقة"
+      "pendingReports": "تقارير معلقة",
+      "trends": "تطور الطلبات",
+      "trendsSubtitle": "آخر 14 يوم",
+      "statusBreakdown": "توزيع حالات الطلبات",
+      "statusBreakdownSubtitle": "إجمالي الطلبات حسب الحالة"
+    },
+    "wizard": {
+      "back": "السابق",
+      "next": "التالي",
+      "submit": "إرسال"
+    },
+    "dataTable": {
+      "search": "بحث...",
+      "noResults": "لا توجد نتائج",
+      "columns": "الأعمدة",
+      "filters": "تصفية",
+      "resetFilters": "مسح التصفية",
+      "rowsSelected": "صف محدد",
+      "export": "تصدير",
+      "exportCSV": "تصدير CSV",
+      "exportExcel": "تصدير Excel",
+      "exportJSON": "تصدير JSON",
+      "density": "الكثافة",
+      "compact": "مضغوطة",
+      "defaultDensity": "افتراضية",
+      "comfortable": "مريحة",
+      "page": "صفحة",
+      "of": "من",
+      "rowsPerPage": "صفوف لكل صفحة",
+      "first": "الأولى",
+      "previous": "السابق",
+      "next": "التالي",
+      "last": "الأخيرة",
+      "actions": "إجراءات",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "loading": "جاري التحميل...",
+      "sortAsc": "ترتيب تصاعدي",
+      "sortDesc": "ترتيب تنازلي",
+      "hide": "إخفاء",
+      "pinLeft": "تثبيت يسار",
+      "pinRight": "تثبيت يمين",
+      "unpin": "إلغاء التثبيت",
+      "clearSearch": "مسح البحث",
+      "expandRow": "توسيع الصف"
     }
   },
   "property": {
@@ -195,7 +243,8 @@
       "awaiting_guest_confirmation": "بانتظار تأكيد الضيف",
       "in_progress": "قيد التنفيذ",
       "completed": "تم الإنجاز",
-      "rejected": "مرفوض"
+      "rejected": "مرفوض",
+      "cancelled": "ملغى"
     },
     "types": {
       "regular": "تنظيف دوري",

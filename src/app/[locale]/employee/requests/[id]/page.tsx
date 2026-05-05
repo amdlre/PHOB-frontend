@@ -1,6 +1,6 @@
 import { Building2, Calendar, Hash, Layers, Mail, MapPin, Phone, User } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
-import { Box, Flex, Grid, Stack, Typography } from '@amdlre/design-system';
+import { Box, Flex, Grid, HeaderInfo, Stack, Typography } from '@amdlre/design-system';
 import { api } from '@/lib/api/fetcher';
 import { ENDPOINTS } from '@/lib/api/endpoints';
 import { formatDateTime } from '@/lib/utils';
@@ -64,17 +64,13 @@ export default async function EmployeeRequestDetailPage({ params }: Props) {
 
   return (
     <Stack gap={6} className="mx-auto max-w-5xl pb-24">
-      <Flex wrap="wrap" align="center" justify="between" gap={4}>
-        <Stack gap={1}>
-          <Typography as="h1" variant="h1" className="text-3xl font-black tracking-tight text-brand-black">
-            {t('details')}
-          </Typography>
-          <Typography as="p" variant="small" className="text-xs font-bold text-brand-slate">
-            #{r.id}
-          </Typography>
-        </Stack>
-        <RequestStatusBadge status={r.status} />
-      </Flex>
+      <HeaderInfo
+        size="md"
+        title={t('details')}
+        subtitle={`#${r.id}`}
+        backHref={`/${locale}/employee/requests`}
+        actions={<RequestStatusBadge status={r.status} />}
+      />
 
       {/* Client info */}
       <Box className="card-premium p-8">

@@ -27,6 +27,7 @@ const ALL_STATUSES: RequestStatus[] = [
   'in_progress',
   'completed',
   'rejected',
+  'cancelled',
 ];
 
 export function StatusUpdateControl({ requestId, current, guestConfirmed }: Props) {

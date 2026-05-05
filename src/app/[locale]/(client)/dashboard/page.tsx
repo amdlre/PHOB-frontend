@@ -12,6 +12,7 @@ import {
 import { api } from '@/lib/api/fetcher';
 import { ENDPOINTS } from '@/lib/api/endpoints';
 import { getCurrentUser } from '@/lib/auth/session';
+import { DashboardCharts } from '@/components/dashboard/dashboard-charts';
 import type { Property, CleaningRequest, Subscription } from '@/types/domain';
 import type { PageProps } from '@/types';
 
@@ -103,6 +104,8 @@ export default async function ClientDashboardPage({ params }: PageProps) {
           />
         ))}
       </Grid>
+
+      <DashboardCharts requests={requests} namespace="dashboard.client" />
 
       <Stack as="section" gap={4}>
         <Typography as="h2" variant="large" className="font-black">

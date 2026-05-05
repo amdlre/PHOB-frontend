@@ -87,7 +87,11 @@
       "quickActions": "Quick Actions",
       "addProperty": "Add New Property",
       "newRequest": "New Cleaning Request",
-      "newSubscription": "New Subscription"
+      "newSubscription": "New Subscription",
+      "trends": "Requests Trends",
+      "trendsSubtitle": "Last 14 days",
+      "statusBreakdown": "Status Breakdown",
+      "statusBreakdownSubtitle": "All requests by status"
     },
     "employee": {
       "title": "Operations Dashboard",
@@ -98,7 +102,51 @@
       "inProgress": "In Progress",
       "completed": "Completed",
       "expiringSubs": "Expiring Subscriptions",
-      "pendingReports": "Pending Reports"
+      "pendingReports": "Pending Reports",
+      "trends": "Requests Trends",
+      "trendsSubtitle": "Last 14 days",
+      "statusBreakdown": "Status Breakdown",
+      "statusBreakdownSubtitle": "All requests by status"
+    },
+    "wizard": {
+      "back": "Back",
+      "next": "Next",
+      "submit": "Submit"
+    },
+    "dataTable": {
+      "search": "Search...",
+      "noResults": "No results",
+      "columns": "Columns",
+      "filters": "Filters",
+      "resetFilters": "Reset filters",
+      "rowsSelected": "rows selected",
+      "export": "Export",
+      "exportCSV": "Export CSV",
+      "exportExcel": "Export Excel",
+      "exportJSON": "Export JSON",
+      "density": "Density",
+      "compact": "Compact",
+      "defaultDensity": "Default",
+      "comfortable": "Comfortable",
+      "page": "Page",
+      "of": "of",
+      "rowsPerPage": "Rows per page",
+      "first": "First",
+      "previous": "Previous",
+      "next": "Next",
+      "last": "Last",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete",
+      "loading": "Loading...",
+      "sortAsc": "Sort ascending",
+      "sortDesc": "Sort descending",
+      "hide": "Hide",
+      "pinLeft": "Pin left",
+      "pinRight": "Pin right",
+      "unpin": "Unpin",
+      "clearSearch": "Clear search",
+      "expandRow": "Expand row"
     }
   },
   "property": {
@@ -195,7 +243,8 @@
       "awaiting_guest_confirmation": "Awaiting Guest",
       "in_progress": "In Progress",
       "completed": "Completed",
-      "rejected": "Rejected"
+      "rejected": "Rejected",
+      "cancelled": "Cancelled"
     },
     "types": {
       "regular": "Regular cleaning",

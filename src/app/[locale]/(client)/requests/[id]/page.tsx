@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { Calendar, FileText, Home } from 'lucide-react';
-import { Box, Flex, Grid, Stack, Typography } from '@amdlre/design-system';
+import { Box, Flex, Grid, HeaderInfo, Stack, Typography } from '@amdlre/design-system';
 import { api } from '@/lib/api/fetcher';
 import { ENDPOINTS } from '@/lib/api/endpoints';
 import { formatDateTime } from '@/lib/utils';
@@ -46,17 +46,13 @@ export default async function ClientRequestDetailPage({ params }: Props) {
 
   return (
     <Stack gap={6} className="mx-auto max-w-4xl pb-24">
-      <Flex wrap="wrap" align="center" justify="between" gap={4}>
-        <Stack gap={1}>
-          <Typography as="h1" variant="h1" className="text-3xl font-black tracking-tight text-brand-black">
-            {t('details')}
-          </Typography>
-          <Typography as="p" variant="small" className="text-xs font-bold text-brand-slate">
-            #{r.id}
-          </Typography>
-        </Stack>
-        <RequestStatusBadge status={r.status} />
-      </Flex>
+      <HeaderInfo
+        size="md"
+        title={t('details')}
+        subtitle={`#${r.id}`}
+        backHref={`/${locale}/requests`}
+        actions={<RequestStatusBadge status={r.status} />}
+      />
 
       <Grid gap={4} className="card-premium p-8 sm:grid-cols-2">
         <Detail icon={<Home size={16} />} label={t('selectProperty')} value={r.property_name} />
@@ -65,7 +61,11 @@ export default async function ClientRequestDetailPage({ params }: Props) {
           label={t('scheduledAt')}
           value={formatDateTime(r.scheduled_at, locale)}
         />
-        <Detail icon={<FileText size={16} />} label={t('type')} value={r.cleaning_type ? t(`types.${r.cleaning_type}` as 'types.regular') : undefined} />
+        <Detail
+          icon={<FileText size={16} />}
+          label={t('type')}
+          value={r.cleaning_type ? t(`types.${r.cleaning_type}` as 'types.regular') : undefined}
+        />
         <Detail icon={<FileText size={16} />} label={t('notes')} value={r.notes} />
       </Grid>
 

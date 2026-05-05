@@ -2,22 +2,28 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import { ArrowLeft, AlertCircle } from 'lucide-react';
+import { AlertCircle, Building2, CalendarClock } from 'lucide-react';
 import {
   Box,
-  Button,
   Card,
+  CardContent,
+  CustomInput,
+  CustomTextarea,
+  Field,
   Flex,
   Grid,
-  Input,
-  Label,
   NativeSelect,
-  Stack,
-  Textarea,
-  Typography,
+  WizardForm,
+  type WizardFormStep,
 } from '@amdlre/design-system';
 import { createCleaningRequestAction } from '@/actions/requests';
+import {
+  cleaningRequestSchema,
+  type CleaningRequestFormData,
+} from '@/lib/validations/request';
 import type { Property } from '@/types/domain';
 
 interface Props {
@@ -32,132 +38,151 @@ function defaultScheduledAt(): string {
 
 export function CleaningRequestForm({ properties }: Props) {
   const t = useTranslations('request');
+  const tWiz = useTranslations('dashboard.wizard');
   const router = useRouter();
   const params = useParams<{ locale: string }>();
-  const [pending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
+  const [, startTransition] = useTransition();
 
   const subscribed = properties.filter((p) => p.has_active_subscription);
 
-  const [propertyId, setPropertyId] = useState(subscribed[0]?.id ?? '');
-  const [scheduledAt, setScheduledAt] = useState(defaultScheduledAt());
-  const [type, setType] = useState<'regular' | 'deep' | 'checkout'>('checkout');
-  const [notes, setNotes] = useState('');
+  const form = useForm<CleaningRequestFormData>({
+    // zod v4 + DS's bundled RHF version differ on input/output inference; the runtime contract is correct.
+    resolver: zodResolver(cleaningRequestSchema) as never,
+    defaultValues: {
+      property_id: subscribed[0]?.id ?? '',
+      scheduled_at: defaultScheduledAt(),
+      cleaning_type: 'checkout',
+      notes: '',
+    },
+    mode: 'onBlur',
+  });
 
-  const submit = () => {
-    setError(null);
-    if (!propertyId) {
-      setError(t('rules.noActiveSub'));
-      return;
-    }
-    startTransition(async () => {
-      const res = await createCleaningRequestAction({
-        property_id: propertyId,
-        scheduled_at: new Date(scheduledAt).toISOString(),
-        cleaning_type: type,
-        notes,
-      });
-      if (!res.success) {
-        setError(res.message || t('rules.min12h'));
-        return;
-      }
-      router.push(`/${params.locale}/requests`);
-      router.refresh();
-    });
-  };
+  const [submitting, setSubmitting] = useState(false);
+
+  const steps: WizardFormStep<CleaningRequestFormData>[] = [
+    {
+      id: 'property',
+      title: t('selectProperty'),
+      icon: <Building2 className="h-4 w-4" />,
+      fields: ['property_id'],
+    },
+    {
+      id: 'schedule',
+      title: t('scheduledAt'),
+      icon: <CalendarClock className="h-4 w-4" />,
+      fields: ['scheduled_at', 'cleaning_type', 'notes'],
+    },
+  ];
 
   return (
-    <Stack gap={6}>
-      {error ? (
-        <Flex
-          align="center"
-          gap={2}
-          className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600"
-        >
-          <AlertCircle size={16} />
-          <Box as="span">{error}</Box>
-        </Flex>
-      ) : null}
-
+    <>
       {subscribed.length === 0 ? (
-        <Box className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-700">
-          {t('rules.noActiveSub')}
+        <Box className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-700">
+          <Flex align="center" gap={2}>
+            <AlertCircle size={16} />
+            {t('rules.noActiveSub')}
+          </Flex>
         </Box>
       ) : null}
 
-      <Card className="card-premium p-8">
-        <Stack gap={5}>
-          <Stack gap={2} className="text-right">
-            <Label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-              {t('selectProperty')}
-            </Label>
-            <NativeSelect
-              value={propertyId}
-              onChange={(e) => setPropertyId(e.target.value)}
-              className="text-right"
-              disabled={subscribed.length === 0}
+      <WizardForm
+        // The DS bundles a different RHF version under its own node_modules; runtime is fine, types diverge.
+        form={form as never}
+        steps={steps as never}
+        labels={{ back: tWiz('back'), next: tWiz('next'), submit: t('submit') }}
+        onComplete={async (rawValues) =>
+          new Promise((resolve) => {
+            const values = rawValues as CleaningRequestFormData;
+            setSubmitting(true);
+            startTransition(async () => {
+              const res = await createCleaningRequestAction({
+                ...values,
+                scheduled_at: new Date(values.scheduled_at).toISOString(),
+              });
+              setSubmitting(false);
+              if (!res.success) {
+                resolve({ message: res.message || t('rules.min12h') });
+                return;
+              }
+              router.push(`/${params.locale}/requests`);
+              router.refresh();
+              resolve();
+            });
+          })
+        }
+      >
+        {/* Step 1: property */}
+        <Card className="card-premium">
+          <CardContent className="space-y-5 p-8">
+            <Field
+              label={t('selectProperty')}
+              error={form.formState.errors.property_id?.message}
             >
-              {subscribed.length === 0 ? <option value="">—</option> : null}
-              {subscribed.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.building_name} {p.unit_number ? `· ${p.unit_number}` : ''}
-                </option>
-              ))}
-            </NativeSelect>
-          </Stack>
-
-          <Grid gap={4} className="md:grid-cols-2">
-            <Stack gap={2} className="text-right">
-              <Label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-                {t('scheduledAt')}
-              </Label>
-              <Input
-                type="datetime-local"
-                value={scheduledAt}
-                onChange={(e) => setScheduledAt(e.target.value)}
-                className="text-right"
+              <Controller
+                control={form.control}
+                name="property_id"
+                render={({ field }) => (
+                  <NativeSelect
+                    value={field.value}
+                    onChange={(e) => field.onChange(e.target.value)}
+                    className="text-right"
+                    disabled={subscribed.length === 0}
+                  >
+                    {subscribed.length === 0 ? <option value="">—</option> : null}
+                    {subscribed.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.building_name} {p.unit_number ? `· ${p.unit_number}` : ''}
+                      </option>
+                    ))}
+                  </NativeSelect>
+                )}
               />
-            </Stack>
-            <Stack gap={2} className="text-right">
-              <Label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-                {t('type')}
-              </Label>
-              <NativeSelect
-                value={type}
-                onChange={(e) => setType(e.target.value as 'regular' | 'deep' | 'checkout')}
-                className="text-right"
-              >
-                <option value="checkout">{t('types.checkout')}</option>
-                <option value="regular">{t('types.regular')}</option>
-                <option value="deep">{t('types.deep')}</option>
-              </NativeSelect>
-            </Stack>
-          </Grid>
+            </Field>
+          </CardContent>
+        </Card>
 
-          <Stack gap={2} className="text-right">
-            <Label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-              {t('notes')}
-            </Label>
-            <Textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
+        {/* Step 2: schedule + type + notes */}
+        <Card className="card-premium">
+          <CardContent className="space-y-5 p-8">
+            <Grid gap={4} className="md:grid-cols-2">
+              <CustomInput
+                label={t('scheduledAt')}
+                isRequired
+                type="datetime-local"
+                error={form.formState.errors.scheduled_at?.message}
+                {...form.register('scheduled_at')}
+              />
+              <Field label={t('type')} error={form.formState.errors.cleaning_type?.message}>
+                <Controller
+                  control={form.control}
+                  name="cleaning_type"
+                  render={({ field }) => (
+                    <NativeSelect
+                      value={field.value}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      className="text-right"
+                    >
+                      <option value="checkout">{t('types.checkout')}</option>
+                      <option value="regular">{t('types.regular')}</option>
+                      <option value="deep">{t('types.deep')}</option>
+                    </NativeSelect>
+                  )}
+                />
+              </Field>
+            </Grid>
+            <CustomTextarea
+              label={t('notes')}
               rows={4}
               placeholder={t('notesPlaceholder')}
-              className="text-right"
+              error={form.formState.errors.notes?.message}
+              {...form.register('notes')}
             />
-          </Stack>
-        </Stack>
-      </Card>
-
-      <Button
-        type="button"
-        onClick={submit}
-        disabled={pending || subscribed.length === 0}
-        rightIcon={<ArrowLeft size={18} />}
-        className="w-full rounded-2xl bg-brand-black py-5 text-sm font-black text-white shadow-xl hover:bg-brand-accent disabled:opacity-60"
-      >
-        {pending ? '...' : t('submit')}
-      </Button>
-    </Stack>
+            {submitting ? (
+              <Box className="text-xs font-bold text-brand-slate">…</Box>
+            ) : null}
+          </CardContent>
+        </Card>
+      </WizardForm>
+    </>
   );
 }

@@ -1,19 +1,32 @@
 'use client';
 
-import { Bell } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Box, Button, Card, Flex, Stack, Typography } from '@amdlre/design-system';
+import { NotificationsPopover, type NotificationItem } from '@amdlre/design-system';
 import type { Notification } from '@/types/domain';
 import { ENDPOINTS } from '@/lib/api/endpoints';
 import { APP_CONFIG } from '@/constants/config';
 
 const POLL_INTERVAL = 30_000;
 
+function formatRelative(iso: string, locale: string = 'ar'): string {
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return '';
+  const diff = Date.now() - then;
+  const sec = Math.round(diff / 1000);
+  const min = Math.round(sec / 60);
+  const hr = Math.round(min / 60);
+  const day = Math.round(hr / 24);
+  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+  if (sec < 60) return rtf.format(-sec, 'second');
+  if (min < 60) return rtf.format(-min, 'minute');
+  if (hr < 24) return rtf.format(-hr, 'hour');
+  return rtf.format(-day, 'day');
+}
+
 export function NotificationBell() {
   const t = useTranslations('notifications');
   const [items, setItems] = useState<Notification[]>([]);
-  const [open, setOpen] = useState(false);
 
   async function fetchNotifications() {
     try {
@@ -35,69 +48,26 @@ export function NotificationBell() {
     return () => clearInterval(id);
   }, []);
 
-  const unread = items.filter((n) => !n.read).length;
+  const dsItems: NotificationItem[] = useMemo(
+    () =>
+      items.map((n) => ({
+        id: n.id,
+        title: n.title,
+        description: n.body,
+        unread: !n.read,
+        timestamp: formatRelative(n.created_at),
+      })),
+    [items],
+  );
 
   return (
-    <Box className="relative">
-      <Button
-        type="button"
-        variant="outline"
-        size="icon"
-        onClick={() => setOpen((v) => !v)}
-        className="relative h-10 w-10 rounded-2xl border-brand-border bg-white text-brand-black hover:border-brand-accent hover:text-brand-accent"
-        aria-label="notifications"
-      >
-        <Bell size={18} />
-        {unread > 0 ? (
-          <Box
-            as="span"
-            className="absolute -top-1 -right-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-accent px-1 text-[10px] font-black text-white"
-          >
-            {unread}
-          </Box>
-        ) : null}
-      </Button>
-      {open ? (
-        <Card className="absolute end-0 z-50 mt-2 w-80 max-h-96 overflow-auto rounded-3xl border-brand-border bg-white p-3 shadow-2xl">
-          <Flex align="center" justify="between" className="px-2 pb-2">
-            <Typography as="h4" variant="small" className="font-black text-brand-black">
-              {t('title')}
-            </Typography>
-          </Flex>
-          {items.length === 0 ? (
-            <Typography
-              as="p"
-              variant="muted"
-              className="px-2 py-6 text-center text-xs font-bold"
-            >
-              {t('empty')}
-            </Typography>
-          ) : (
-            <Stack as="ul" gap={2} className="list-none">
-              {items.map((n) => (
-                <Box
-                  key={n.id}
-                  as="li"
-                  className={`rounded-2xl border p-3 text-xs ${
-                    n.read
-                      ? 'border-brand-border bg-white'
-                      : 'border-brand-accent/30 bg-brand-accent/5'
-                  }`}
-                >
-                  <Typography as="p" variant="small" className="font-black text-brand-black">
-                    {n.title}
-                  </Typography>
-                  {n.body ? (
-                    <Typography as="p" variant="muted" className="mt-1">
-                      {n.body}
-                    </Typography>
-                  ) : null}
-                </Box>
-              ))}
-            </Stack>
-          )}
-        </Card>
-      ) : null}
-    </Box>
+    <NotificationsPopover
+      notifications={dsItems}
+      labels={{
+        title: t('title'),
+        empty: t('empty'),
+        ariaLabel: t('title'),
+      }}
+    />
   );
 }
