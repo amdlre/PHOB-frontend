@@ -8,11 +8,10 @@ import {
   Button,
   Card,
   Checkbox,
-  Flex,
+  CustomTextarea,
   Grid,
   Label,
   Stack,
-  Textarea,
   Typography,
 } from '@amdlre/design-system';
 import { ImageUploader } from '@/components/shared/image-uploader';
@@ -117,9 +116,27 @@ export function VisitReportForm({ requestId }: Props) {
         <ImageUploader value={after} onChange={setAfter} label={t('afterImages')} />
 
         <Grid gap={4} className="md:grid-cols-3">
-          <Field label={t('generalNotes')} value={generalNotes} onChange={setGeneralNotes} />
-          <Field label={t('damageNotes')} value={damage} onChange={setDamage} />
-          <Field label={t('maintenanceNotes')} value={maintenance} onChange={setMaintenance} />
+          <CustomTextarea
+            label={t('generalNotes')}
+            rows={3}
+            value={generalNotes}
+            onChange={(e) => setGeneralNotes(e.target.value)}
+            className="text-right"
+          />
+          <CustomTextarea
+            label={t('damageNotes')}
+            rows={3}
+            value={damage}
+            onChange={(e) => setDamage(e.target.value)}
+            className="text-right"
+          />
+          <CustomTextarea
+            label={t('maintenanceNotes')}
+            rows={3}
+            value={maintenance}
+            onChange={(e) => setMaintenance(e.target.value)}
+            className="text-right"
+          />
         </Grid>
 
         <Box className="rounded-3xl border border-brand-border bg-brand-offwhite p-5">
@@ -135,7 +152,7 @@ export function VisitReportForm({ requestId }: Props) {
             </Label>
             {hasMissing ? (
               <Stack gap={3}>
-                <Textarea
+                <CustomTextarea
                   value={missingDesc}
                   onChange={(e) => setMissingDesc(e.target.value)}
                   rows={3}
@@ -158,29 +175,5 @@ export function VisitReportForm({ requestId }: Props) {
         </Button>
       </Stack>
     </Card>
-  );
-}
-
-function Field({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-}) {
-  return (
-    <Stack gap={2} className="text-right">
-      <Label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-        {label}
-      </Label>
-      <Textarea
-        rows={3}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="text-right"
-      />
-    </Stack>
   );
 }

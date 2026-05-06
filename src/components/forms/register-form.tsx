@@ -11,9 +11,8 @@ import {
   Box,
   Button,
   Card,
+  CustomInput,
   Flex,
-  Input,
-  Label,
   Stack,
   Typography,
 } from '@amdlre/design-system';
@@ -61,7 +60,7 @@ export function RegisterForm() {
   return (
     <Card className="card-premium w-full max-w-md p-10">
       <Stack gap={3} align="center" className="mb-8 text-center">
-        <Logo size="lg" className="justify-center text-brand-black" />
+        <Logo size="lg" />
         <Typography as="h1" variant="h2" className="text-2xl font-black tracking-tight text-brand-black">
           {t('title')}
         </Typography>
@@ -102,24 +101,15 @@ export function RegisterForm() {
                   : field === 'phone'
                     ? t('phonePlaceholder')
                     : undefined;
-              const err = errors[field]?.message;
               return (
-                <Stack key={field} gap={2} className="text-right">
-                  <Label className="block pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-                    {label}
-                  </Label>
-                  <Input
-                    type={type}
-                    placeholder={placeholder}
-                    className="input-base text-right"
-                    {...register(field)}
-                  />
-                  {err ? (
-                    <Typography as="p" variant="small" className="text-xs font-bold text-red-500">
-                      {err}
-                    </Typography>
-                  ) : null}
-                </Stack>
+                <CustomInput
+                  key={field}
+                  label={label}
+                  type={type}
+                  placeholder={placeholder}
+                  error={errors[field]?.message}
+                  {...register(field)}
+                />
               );
             },
           )}
@@ -127,10 +117,12 @@ export function RegisterForm() {
           <Button
             type="submit"
             disabled={pending}
-            rightIcon={<ArrowLeft size={18} />}
-            className="mt-2 w-full rounded-2xl bg-brand-black py-5 text-sm font-black text-white shadow-xl hover:bg-brand-accent disabled:opacity-60"
+            rightIcon={<ArrowLeft size={18} className='ltr:rotate-180' />}
+            size={"xl"}
+            rounded={"xl"}
+            isLoading={pending}
           >
-            {pending ? t('loading') : t('submit')}
+            {t('submit')}
           </Button>
         </Stack>
       </form>

@@ -30,7 +30,7 @@ export default async function PropertyDetailPage({ params }: Props) {
   const p = property!;
 
   return (
-    <Stack gap={6} className="mx-auto max-w-4xl pb-24">
+    <Stack gap={6} className="pb-24">
       <HeaderInfo
         size="md"
         title={p.building_name}

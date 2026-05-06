@@ -363,6 +363,31 @@
       "a2": "To ensure the best quality and team availability, we recommend filing the request at least 12 hours before the service time.",
       "q3": "How do you ensure cleaning quality?",
       "a3": "We follow strict hotel-grade standards and upload before/after photos for every request via the app for full transparency."
+    },
+    "plans": {
+      "title": "PHOB Monthly Plans",
+      "leadBefore": "Pick the plan that fits your unit size and enjoy",
+      "leadHighlight": "unlimited",
+      "leadAfter": "visits all month long, with full coverage of hotel-grade guest essentials.",
+      "unlimitedTagline": "Unlimited visits all month",
+      "perMonth": "/ month",
+      "currency": "SAR",
+      "mostPopular": "Most popular",
+      "subscribeNow": "Subscribe now",
+      "enterpriseTitle": "Have larger spaces or multiple units?",
+      "enterpriseLead": "For large units (villas/floors) or multiple-unit portfolios, we'll happily prepare a custom quote tailored to your needs.",
+      "enterpriseCta": "Contact us for a custom quote",
+      "features": {
+        "f0": "Unlimited visits / month",
+        "f1": "Cleaning, polishing & freshening",
+        "f2": "Cleaning supplies & hospitality kit",
+        "f3": "Linen washing & sanitisation"
+      },
+      "packages": {
+        "studio": "Studio Plan",
+        "one_br": "1BR + Living",
+        "two_br": "2BR + Living"
+      }
     }
   },
   "footer": {

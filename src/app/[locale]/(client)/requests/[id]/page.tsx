@@ -45,7 +45,7 @@ export default async function ClientRequestDetailPage({ params }: Props) {
   const showCountdown = ['scheduled', 'awaiting_guest_confirmation'].includes(r.status);
 
   return (
-    <Stack gap={6} className="mx-auto max-w-4xl pb-24">
+    <Stack gap={6} className="pb-24">
       <HeaderInfo
         size="md"
         title={t('details')}

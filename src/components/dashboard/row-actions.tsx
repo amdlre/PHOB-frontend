@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Eye, Pencil, Trash2, Loader2 } from 'lucide-react';
@@ -19,10 +20,14 @@ interface Props {
   itemLabel?: string;
 }
 
+const ICON_BTN_CLASS =
+  'rounded p-1.5 text-slate-500 transition-colors hover:bg-brand-offwhite hover:text-brand-accent';
+
 /**
- * Compact view/edit/delete cluster for entity tables. Delete shows a confirm
- * modal via the DS `useConfirm` hook before invoking the action. View/edit are
- * regular Next.js navigations.
+ * Compact view/edit/delete cluster for entity tables. View/edit are real
+ * `<Link>`s — so the URL shows in the browser status bar and the user can
+ * cmd-click / right-click to open in a new tab. Delete shows a DS confirm
+ * modal before invoking the action and refreshing the route.
  */
 export function RowActions({ viewHref, editHref, onDelete, itemLabel }: Props) {
   const t = useTranslations('common.rowActions');
@@ -64,30 +69,26 @@ export function RowActions({ viewHref, editHref, onDelete, itemLabel }: Props) {
   return (
     <div className="flex items-center justify-end gap-1">
       {viewHref && (
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            router.push(viewHref);
-          }}
+        <Link
+          href={viewHref}
           title={t('view')}
-          className="rounded p-1.5 text-slate-500 transition-colors hover:bg-brand-offwhite hover:text-brand-accent"
+          aria-label={t('view')}
+          onClick={(e) => e.stopPropagation()}
+          className={ICON_BTN_CLASS}
         >
           <Eye className="h-4 w-4" />
-        </button>
+        </Link>
       )}
       {editHref && (
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            router.push(editHref);
-          }}
+        <Link
+          href={editHref}
           title={t('edit')}
-          className="rounded p-1.5 text-slate-500 transition-colors hover:bg-brand-offwhite hover:text-brand-accent"
+          aria-label={t('edit')}
+          onClick={(e) => e.stopPropagation()}
+          className={ICON_BTN_CLASS}
         >
           <Pencil className="h-4 w-4" />
-        </button>
+        </Link>
       )}
       {onDelete && (
         <button
@@ -98,6 +99,7 @@ export function RowActions({ viewHref, editHref, onDelete, itemLabel }: Props) {
           }}
           disabled={pending}
           title={t('delete')}
+          aria-label={t('delete')}
           className="rounded p-1.5 text-red-500 transition-colors hover:bg-red-50 disabled:opacity-50"
         >
           {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}

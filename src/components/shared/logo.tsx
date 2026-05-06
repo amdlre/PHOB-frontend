@@ -1,37 +1,54 @@
-import { Box, Typography } from '@amdlre/design-system';
+'use client';
+
+import Link from 'next/link';
+import { useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 interface LogoProps {
   className?: string;
-  showDot?: boolean;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  /** Override the destination. Defaults to the current locale's home. */
+  href?: string;
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>;
 }
 
-const sizeClasses: Record<string, string> = {
-  xs: 'text-sm',
-  sm: 'text-lg',
-  md: 'text-2xl',
-  lg: 'text-4xl',
-  xl: 'text-6xl',
+const sizeClasses: Record<NonNullable<LogoProps['size']>, string> = {
+  xs: 'h-4',
+  sm: 'h-5',
+  md: 'h-7',
+  lg: 'h-10',
+  xl: 'h-14',
 };
 
-export function Logo({ className, showDot = true, size = 'md' }: LogoProps) {
+export function Logo({ className, size = 'md', href, onClick }: LogoProps) {
+  const locale = useLocale();
+
   return (
-    <Typography
-      as="span"
-      className={cn(
-        'inline-flex items-center font-black leading-none tracking-tighter',
-        sizeClasses[size],
-        className,
-      )}
-      dir="ltr"
+    <Link
+      href={href ?? `/${locale}`}
+      onClick={onClick}
+      aria-label="PHOB"
+      className={cn('inline-flex items-center text-brand-black', className)}
     >
-      PHOB
-      {showDot ? (
-        <Box as="span" className="ml-0.5 text-brand-accent">
-          .
-        </Box>
-      ) : null}
-    </Typography>
+      <svg
+        viewBox="0 0 132 36"
+        xmlns="http://www.w3.org/2000/svg"
+        className={cn('w-auto', sizeClasses[size])}
+        aria-hidden="true"
+      >
+        <text
+          x="0"
+          y="28"
+          fontFamily="inherit"
+          fontWeight="900"
+          fontSize="32"
+          letterSpacing="-1.5"
+          fill="currentColor"
+        >
+          PHOB
+        </text>
+        <circle cx="95" cy="29" r="3.5" className="fill-brand-accent" />
+      </svg>
+    </Link>
   );
 }

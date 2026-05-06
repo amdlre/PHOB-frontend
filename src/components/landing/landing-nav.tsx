@@ -43,9 +43,12 @@ export function LandingNav() {
       <Box className="mx-auto w-full max-w-7xl px-6">
         <Flex align="center" justify="between" className="h-20">
           <Flex align="center" gap={12}>
-            <Link href={home} onClick={scrollToTop} className="group ml-4 flex items-center">
-              <Logo size="md" className="text-brand-black" />
-            </Link>
+            <Logo
+              size="md"
+              href={home}
+              onClick={scrollToTop}
+              className="ml-4 text-brand-black"
+            />
 
             <Flex align="center" gap={8} className="hidden md:flex">
               <Link

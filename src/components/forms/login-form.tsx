@@ -5,15 +5,14 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { ArrowLeft, Lock, Mail } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import {
   Box,
   Button,
   Card,
+  CustomInput,
   Flex,
-  Input,
-  Label,
   Stack,
   Typography,
 } from '@amdlre/design-system';
@@ -57,7 +56,7 @@ export function LoginForm() {
   return (
     <Card className="card-premium w-full max-w-md p-12">
       <Stack gap={3} align="center" className="mb-10 text-center">
-        <Logo size="lg" className="justify-center text-brand-black" />
+        <Logo size="lg" />
         <Typography as="h1" variant="h1" className="text-3xl font-black tracking-tight text-brand-black">
           {t('title')}
         </Typography>
@@ -78,49 +77,30 @@ export function LoginForm() {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack gap={5}>
-          <Stack gap={2} className="text-right">
-            <Label className="flex items-center justify-end gap-2 pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-              <Box as="span">{t('identifier')}</Box>
-              <Mail size={12} />
-            </Label>
-            <Input
-              type="text"
-              placeholder={t('identifierPlaceholder')}
-              className="input-base text-right"
-              {...register('identifier')}
-            />
-            {errors.identifier ? (
-              <Typography as="p" variant="small" className="text-xs font-bold text-red-500">
-                {errors.identifier.message}
-              </Typography>
-            ) : null}
-          </Stack>
+          <CustomInput
+            label={t('identifier')}
+            type="text"
+            placeholder={t('identifierPlaceholder')}
+            error={errors.identifier?.message}
+            {...register('identifier')}
+          />
 
-          <Stack gap={2} className="text-right">
-            <Label className="flex items-center justify-end gap-2 pr-2 text-[10px] font-black uppercase tracking-widest text-brand-slate">
-              <Box as="span">{t('password')}</Box>
-              <Lock size={12} />
-            </Label>
-            <Input
-              type="password"
-              placeholder={t('passwordPlaceholder')}
-              className="input-base text-right"
-              {...register('password')}
-            />
-            {errors.password ? (
-              <Typography as="p" variant="small" className="text-xs font-bold text-red-500">
-                {errors.password.message}
-              </Typography>
-            ) : null}
-          </Stack>
+          <CustomInput
+            label={t('password')}
+            type="password"
+            placeholder={t('passwordPlaceholder')}
+            error={errors.password?.message}
+            {...register('password')}
+          />
 
           <Button
             type="submit"
             disabled={pending}
-            rightIcon={<ArrowLeft size={18} />}
-            className="mt-2 w-full rounded-2xl bg-brand-black py-5 text-sm font-black text-white shadow-xl hover:bg-brand-accent disabled:opacity-60"
+            rightIcon={<ArrowLeft size={18} className='ltr:rotate-180' />}
+            size={"xl"}
+            isLoading={pending}
           >
-            {pending ? t('loading') : t('submit')}
+            {t('submit')}
           </Button>
         </Stack>
       </form>
