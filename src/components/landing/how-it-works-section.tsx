@@ -51,7 +51,7 @@ export function HowItWorksSection() {
                   <Typography
                     as="span"
                     variant="h1"
-                    className="block text-6xl text-white/5 transition-colors duration-500 group-hover:text-brand-accent/20"
+                    className="block text-6xl text-background transition-colors duration-500 group-hover:text-secondary"
                   >
                     0{step}
                   </Typography>

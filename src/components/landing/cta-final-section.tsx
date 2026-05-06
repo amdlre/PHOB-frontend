@@ -51,16 +51,14 @@ export function CtaFinalSection() {
             </Stack>
             <Flex justify="center" gap={6}>
               <Button
-                asChild
-                size="lg"
-                className="gap-2 rounded-2xl bg-brand-accent px-12 py-7 text-base hover:bg-white hover:text-brand-black"
+                locale={locale}
+                href='/register'
+                rightIcon={<ArrowLeft size={18} className='ltr:rotate-180' />}
+                size={"xl"}
+                rounded={"xl"}
+                variant={"secondary"}
               >
-                <Link href={`/${locale}/register`}>
-                  <Typography as="span" variant="small" className="font-black">
-                    {t('ctaStart')}
-                  </Typography>
-                  <ArrowLeft size={20} />
-                </Link>
+                {t('ctaStart')}
               </Button>
             </Flex>
           </Stack>

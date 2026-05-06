@@ -28,11 +28,13 @@ export function Logo({ className, size = 'md', href, onClick }: LogoProps) {
       href={href ?? `/${locale}`}
       onClick={onClick}
       aria-label="PHOB"
+      dir="ltr"
       className={cn('inline-flex items-center text-brand-black', className)}
     >
       <svg
         viewBox="0 0 132 36"
         xmlns="http://www.w3.org/2000/svg"
+        direction="ltr"
         className={cn('w-auto', sizeClasses[size])}
         aria-hidden="true"
       >
